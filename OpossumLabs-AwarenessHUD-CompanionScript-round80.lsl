@@ -19,7 +19,7 @@
 // OPOSSUM LABS AWARENESS HUD - Companion Script (any prim)
 // ------------------------------------------------------------
 // VERSION HISTORY (newest first):
-//   round 80: FIVE UI CHANGES, ALL FIELD-DRIVEN. (1) WATCH-
+//   round 80: SIX UI CHANGES, ALL FIELD-DRIVEN. (1) WATCH-
 //     REWORK: the remove dialog's BUTTONS were pickName live
 //     lookups - llDialog button text cannot carry viewer
 //     links, and the lookups return "" for anyone not in the
@@ -54,6 +54,16 @@
 //     the shared error ring ("Companion|low: N free") when
 //     free < 2500, at most once per 10 minutes - zero new
 //     reader code, the ring prints on every Status Check.
+//     (6) STATUS CHECK BUILD LINES (Rachel's request, pre-
+//     field amendment): every LM_MEM_TELL reply grows a third
+//     field - the answering script's OWN build number - and
+//     the printed line becomes "Debug: N Script - N free
+//     (P% used) | Build:NNNNNNNNN", so each Status Check
+//     shows WHICH build EACH script runs (a mixed-round unit
+//     shows different builds on its lines - the support
+//     rationale behind per-script builds). This script's own
+//     reply carries its build too, and an old-shape reply
+//     prints cleanly without the suffix.
 //   round 79: THE PICK BUILD LEAVES, AND THE TEXT VALVE
 //     LIGHTENS. Two Companion Stack-Heap Collisions in one
 //     field evening (both in the Watch+ pick build - the
@@ -191,7 +201,8 @@
 //                   "SYNC", or "POWER|0/1", "SCOPE|0/1/2",
 //                   "RANGE|m", "ADD|uuid", "REM|n")
 //   Debug: LM_MEM_ASK broadcast - every script answers with
-//   LM_MEM_TELL ("name|freeBytes"); THIS script prints them.
+//   LM_MEM_TELL ("name|freeBytes|build"); THIS script prints
+//   them.
 // Unknown language codes are returned unchanged (Core shows
 // the raw code as a fallback).
 //
@@ -381,7 +392,7 @@ integer LM_SWEEP_ASK = 19034; // -> the Registrar Script: "NEAR"
                               // round 78)
 integer LM_MEM_ASK = 19036;  // -> LINK_SET (Status Check): every
                              // script answers with LM_MEM_TELL
-integer LM_MEM_TELL = 19037; // <- any script: "name|freeBytes" -
+integer LM_MEM_TELL = 19037; // <- any script: "name|freeBytes|build" -
                              // THIS script prints the debug lines
 
 integer MENU_TIMEOUT = 60; // seconds for typed menu input
@@ -1759,18 +1770,34 @@ default
 
         if (num == LM_MEM_ASK)
         {
-            // Debug: answer the broadcast like the other scripts.
+            // Debug: answer the broadcast like the other
+            // scripts. Round 80 (pre-field amendment): the
+            // reply carries this script's build number, same
+            // as its siblings' replies.
             llMessageLinked(LINK_SET, LM_MEM_TELL,
-                "Companion Script|" + (string)llGetFreeMemory(), "");
+                "Companion Script|" + (string)llGetFreeMemory() +
+                "|" + BUILD_NUM, "");
             return;
         }
 
         if (num == LM_MEM_TELL)
         {
             // One labeled memory line per answering script.
+            // Round 80 (pre-field amendment): each reply now
+            // carries the answering script's OWN build number
+            // as a third field - printed as "Build:NNNNNNNNN"
+            // on that script's line, so a mixed-round unit
+            // shows different builds on its lines (the
+            // support rationale behind per-script builds). An
+            // old-shape reply (no third field) still prints
+            // cleanly without the suffix.
             list f = llParseString2List(str, ["|"], []);
-            llOwnerSay("Debug: " + llList2String(f, 0) + " - " +
-                memPct((integer)llList2String(f, 1)));
+            string mline = "Debug: " + llList2String(f, 0) + " - " +
+                memPct((integer)llList2String(f, 1));
+            string bld = llList2String(f, 2);
+            if (bld != "")
+                mline = mline + " | Build:" + bld;
+            llOwnerSay(mline);
             // The Core Script's liveness gap (its own freeze
             // record), right after its line (round 56): shown
             // together with the Data Script's GAP note, the two

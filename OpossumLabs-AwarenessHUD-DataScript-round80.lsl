@@ -154,6 +154,12 @@
 // "watched avatar left" later. Needle cast to (string),
 // same fix as the Registrar's two census/flags sites this
 // round. The type-trap audit is now a standing round step.
+// (6) STATUS CHECK BUILD LINE (pre-field amendment,
+// Rachel's request): the LM_MEM_TELL reply grows a third
+// field - this script's OWN build number - so the Status
+// Check memory line reads "Data Script - N free (P% used)
+// | Build:NNNNNNNNN" and a mixed-round unit shows
+// different builds on its lines.
 //
 // VERSION: round 79 (2026-10-31): THE 4TH-SCRIPT SPLIT,
 // PART 2 - THE LOOKUP SIDE MOVES OUT. Round 78 moved the
@@ -878,8 +884,8 @@ integer LM_SWEEP_ASK = 19034;
 integer LM_EVENT = 19035;
 integer LM_MEM_ASK = 19036;  // -> LINK_SET (Status Check): every
                              // script answers with LM_MEM_TELL
-integer LM_MEM_TELL = 19037; // <- any script: "name|freeBytes" (the
-                             // Companion prints the debug lines)
+integer LM_MEM_TELL = 19037; // <- any script: "name|freeBytes|build"
+                             // (the Companion prints the debug lines)
 
 string P = "SMH.";        // linkset-data key prefix (shared with the
 string BUILD_NUM = "110126080"; // round 80: the build stamp
@@ -2275,8 +2281,14 @@ default
         {
             // Debug: report this script's free memory (the
             // Companion formats and prints the labeled line).
+            // Round 80 (pre-field amendment): the reply also
+            // carries THIS script's build number, so the
+            // Status Check memory lines show WHICH build each
+            // script runs - a mixed-round unit shows different
+            // builds on its lines.
             llMessageLinked(LINK_SET, LM_MEM_TELL,
-                "Data Script|" + (string)llGetFreeMemory(), "");
+                "Data Script|" + (string)llGetFreeMemory() + "|" +
+                BUILD_NUM, "");
             // If a liveness gap was recorded since the last
             // Wipe, report it right after the memory line - it
             // is the after-the-fact timing of any freeze.

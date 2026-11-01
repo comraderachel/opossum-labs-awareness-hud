@@ -41,9 +41,13 @@
 //     listen event accepts "reseat" AND ":reseat" to cover
 //     both typing styles). The channel number
 //     prints at boot and lives in the help notecard.
-//     (3) BUILD STAMP: every boot line and the Status line
-//     carry Build:110126080 (MMDDYY + zero-padded round) -
-//     a field log now always shows which build ran.
+//     (3) BUILD STAMP: every boot line, the Status line and
+//     the Status Check memory line carry Build:110126080
+//     (MMDDYY + zero-padded round; the LM_MEM_TELL reply
+//     carries this script's build as a third field - a
+//     pre-field amendment so Status Check shows WHICH build
+//     EACH script runs) - a field log now always shows
+//     which build ran.
 //     (4) TRACE CUT: the touch and blink narrations and the
 //     Wipe entry for SMH.trace are deleted with the trace
 //     mode everywhere. (5) WIPE gains SMH.cap (the Data
@@ -328,8 +332,8 @@ integer LM_EVENT = 19035;     // <- Data Script: "OUT|key|name" (left
                               //    started/ended -> power-blink)
 integer LM_MEM_ASK = 19036;   // -> LINK_SET (Debug button): every
                               //    script answers with LM_MEM_TELL
-integer LM_MEM_TELL = 19037;  // <- any script: "name|freeBytes" (the
-                              //    Companion prints the debug lines)
+integer LM_MEM_TELL = 19037;  // <- any script: "name|freeBytes|build"
+                              //    (the Companion prints the debug lines)
 // (19026 was LM_HELP_ASK - retired: the help guide is a notecard in
 // the HUD, given by the Help button via llGiveInventory. Gap kept
 // reserved so the number is never reused.)
@@ -1366,8 +1370,13 @@ default
         // Companion formats and prints the labeled lines.
         if (num == LM_MEM_ASK)
         {
+            // Round 80 (pre-field amendment): the reply carries
+            // this script's build number, like its siblings' -
+            // the Status Check memory lines then show WHICH
+            // build each script runs.
             llMessageLinked(LINK_SET, LM_MEM_TELL,
-                "Core Script|" + (string)llGetFreeMemory(), "");
+                "Core Script|" + (string)llGetFreeMemory() + "|" +
+                BUILD_NUM, "");
             // Round 78: the Registrar Script's 8-slot ring
             // (SMH.rdbg0..7) is read HERE, not by the
             // Companion - its Dump Log prints only the Data

@@ -161,10 +161,13 @@ Debug: opens the diagnostics submenu:
   Status Check: a troubleshooting report with the HUD
   version, your current settings, the private chat channel,
   the linkset-data space, and one memory line for each of
-  the four scripts, each as "N free (P% used)". The four
-  memory lines can appear in any order - but a script that
-  has halted shows NO line at all, and that gap is itself
-  the diagnosis. The report also lists recent known errors,
+  the four scripts, each as "N free (P% used) | Build:
+  110126080" - the build number on each line tells you
+  which build EACH script is running (they should all
+  match). The
+  four memory lines can appear in any order - but a script
+  that has halted shows NO line at all, and that gap is
+  itself the diagnosis. The report also lists recent known errors,
   such as account-data lookups that got no reply from the
   servers (a small rotating log that Wipe clears), and
   history notes about freezes: a tally of times the HUD

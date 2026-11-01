@@ -180,7 +180,7 @@
 // the Data Script's memory guards, which refuse in tight
 // regions; detection itself works without it.
 //
-// VERSION: round 80 (2026-11-01): SEVEN ITEMS, ALL
+// VERSION: round 80 (2026-11-01): EIGHT ITEMS, ALL
 // FIELD-DRIVEN. (1) WATCH-COUNT FIX: the gWatch mirror is
 // STRINGS (llParseString2List of Core's CSV) but both use
 // sites passed a KEY needle - llListFindList matches types
@@ -229,8 +229,13 @@
 // Both units must share an owner (the channel derives from
 // llGetOwner, and the import listener only accepts objects
 // whose llGetOwnerKey matches). PLUS: the trace mode is
-// cut everywhere (the debug rings won), and every boot line
-// and Core's Status line gain the Build:NNNNNNNNN stamp.
+// cut everywhere (the debug rings won), and every boot
+// line, Core's Status line and the Status Check memory
+// line gain the Build:NNNNNNNNN stamp (pre-field
+// amendment: the LM_MEM_TELL reply carries this script's
+// OWN build as a third field - the Companion prints it on
+// the labeled line, so a mixed-round unit shows different
+// builds on its lines).
 //
 // VERSION: round 79 (2026-10-31): THE 4TH-SCRIPT SPLIT,
 // PART 2 - THE ARCHITECTURAL FINISH. The five planned items,
@@ -329,7 +334,8 @@ integer LM_DATA_TELL = 19033; // round 79: finished ARRIVAL
 integer LM_SWEEP_ASK = 19034;
 integer LM_EVENT = 19035;
 integer LM_MEM_ASK = 19036;
-integer LM_MEM_TELL = 19037;
+integer LM_MEM_TELL = 19037; // "name|freeBytes|build" (the Companion
+                             // prints the debug lines)
 
 integer SCAN_LIST_CAP = 20;     // scan listing cap (the old
                                 // MAX_TRACKED_AGENTS; keep in
@@ -1722,9 +1728,13 @@ default
         if (num == LM_MEM_ASK)
         {
             // Status Check: the labeled memory line, same shape
-            // as the other scripts' replies.
+            // as the other scripts' replies. Round 80
+            // (pre-field amendment): the reply carries this
+            // script's build number too - the Status Check
+            // lines then show WHICH build each script runs.
             llMessageLinked(LINK_SET, LM_MEM_TELL,
-                "Registrar Script|" + (string)llGetFreeMemory(), "");
+                "Registrar Script|" + (string)llGetFreeMemory() +
+                "|" + BUILD_NUM, "");
             return;
         }
     }
