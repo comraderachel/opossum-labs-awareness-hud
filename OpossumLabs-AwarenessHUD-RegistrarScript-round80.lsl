@@ -243,7 +243,19 @@
 // timer event and the later duplicate declaration is gone.
 // The balance and ll-name audits cannot see undeclared
 // variables - a use-before-declaration linter joins them as
-// a standing round step.
+// a standing round step. THIRD PRE-FIELD AMENDMENT (found
+// decoding Rachel's first fit-cap field line - "1 avatars |
+// ... and 39 more" in a ~40-avatar region): the census's
+// bot and watch counting loop ran over the TRIMMED list,
+// so a heavy trim made "Scripted agents" and "On watch
+// list" see only the first fit people - a watched resident
+// among the uncounted read as 0, a false negative for the
+// round's own type-trap headline test. The count now scans
+// the FULL list before the trim (it retains nothing - two
+// counters - so it costs no census rows); the born-date
+// asks stay trimmed to the fit. Watch DETECTION was never
+// capped - the Data script's WATCHED lines still cover the
+// whole region.
 //
 // VERSION: round 79 (2026-10-31): THE 4TH-SCRIPT SPLIT,
 // PART 2 - THE ARCHITECTURAL FINISH. The five planned items,
@@ -1231,19 +1243,23 @@ startCensus(list agents, string src)
     if (fit < 1)
         fit = 1; // count at least one - the line costs nothing
     integer tot = llGetListLength(agents);
-    if (tot > fit)
-    {
-        gCensusMore = tot - fit;
-        agents = llList2List(agents, 0, fit - 1);
-        tot = fit;
-    }
-    gCensusTotal = tot;
+    // PRE-FIELD AMENDMENT 3: count bots and watched people
+    // over the FULL list, BEFORE the trim. The r80 fit-cap
+    // clipped the list first, so a heavy trim made "Scripted
+    // agents" and "On watch list" see only the first few
+    // people - a watched resident among the uncounted read
+    // as 0, a false negative for the round's own watch-count
+    // fix. This scan retains nothing (two counters), so it
+    // costs no census rows; only the born-date asks stay
+    // trimmed to the fit. Watch DETECTION was never capped -
+    // the Data script's "WATCHED: entered/left" lines still
+    // cover the whole region.
     gCensusNew = 0;
     gCensusBots = 0;
     gCensusWatched = 0;
     gCensusSrc = src;
     integer i;
-    for (i = 0; i < gCensusTotal; i++)
+    for (i = 0; i < tot; i++)
     {
         key a = llList2Key(agents, i);
         if (llGetAgentInfo(a) & AGENT_AUTOMATED)
@@ -1262,6 +1278,13 @@ startCensus(list agents, string src)
         if (llListFindList(gWatch, [(string)a]) != -1)
             gCensusWatched++;
     }
+    if (tot > fit)
+    {
+        gCensusMore = tot - fit;
+        agents = llList2List(agents, 0, fit - 1);
+        tot = fit;
+    }
+    gCensusTotal = tot;
     if (gCensusTotal == 0)
     {
         sendCensus(); // empty region: the summary is the message
