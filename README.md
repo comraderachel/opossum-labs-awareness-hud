@@ -10,14 +10,14 @@ memory only. No external services, no backend, nothing leaves the object.
 
 | File | Role | Round |
 |---|---|---|
-| `OpossumLabs-AwarenessHUD-CoreScript-round78.lsl` | Settings, watch list, panel buttons, persistence | 78 |
-| `OpossumLabs-AwarenessHUD-DataScript-round79.lsl` | Detection engine - arrivals, sweeps, watch alerts | 79 |
-| `OpossumLabs-AwarenessHUD-RegistrarScript-round79.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching | 79 |
-| `OpossumLabs-AwarenessHUD-CompanionScript-round79.lsl` | Menus, dialogs, owner chat output | 79 |
-| `OpossumLabs-AwarenessHUD-HelpNotecard-round79.txt` | In-world help notecard | 79 |
+| `OpossumLabs-AwarenessHUD-CoreScript-round80.lsl` | Settings, watch list, panel buttons, persistence, reseat recovery | 80 |
+| `OpossumLabs-AwarenessHUD-DataScript-round80.lsl` | Detection engine - arrivals, sweeps, watch alerts | 80 |
+| `OpossumLabs-AwarenessHUD-RegistrarScript-round80.lsl` | Census, List All, Watch+ ranking, watch-list export/import, memory-guarded fetching | 80 |
+| `OpossumLabs-AwarenessHUD-CompanionScript-round80.lsl` | Menus, dialogs, owner chat output | 80 |
+| `OpossumLabs-AwarenessHUD-HelpNotecard-round80.txt` | In-world help notecard | 80 |
 
 The scripts are paired as a set: update all changed scripts together,
-following the ROUND header at the top of each file. Round 79 is the
-field-tested current release; the Core Script is stable at round 78.
+following the ROUND header at the top of each file. Round 80 is the
+current release (all four scripts change this round).
 
 Private repository - retail product source. Do not redistribute.
