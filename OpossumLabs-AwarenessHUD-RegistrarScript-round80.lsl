@@ -235,7 +235,15 @@
 // amendment: the LM_MEM_TELL reply carries this script's
 // OWN build as a third field - the Companion prints it on
 // the labeled line, so a mixed-round unit shows different
-// builds on its lines).
+// builds on its lines). SECOND PRE-FIELD AMENDMENT (found
+// by Rachel's paste - the first COMPILE-BLOCKING bug the
+// audit battery ever missed): the timer's import-window
+// check used "now" ABOVE its declaration ("name not
+// defined"); "integer now = llGetUnixTime()" now opens the
+// timer event and the later duplicate declaration is gone.
+// The balance and ll-name audits cannot see undeclared
+// variables - a use-before-declaration linter joins them as
+// a standing round step.
 //
 // VERSION: round 79 (2026-10-31): THE 4TH-SCRIPT SPLIT,
 // PART 2 - THE ARCHITECTURAL FINISH. The five planned items,
@@ -1483,6 +1491,12 @@ default
 
     timer()
     {
+        // Pre-field amendment fix: "now" is declared BEFORE the
+        // import-window check - the first draft used it above
+        // its declaration and LSL rejected the name (Rachel's
+        // paste found it; the balance and ll-name audits cannot
+        // see undeclared variables).
+        integer now = llGetUnixTime();
         // Round 80: the 60-second IMPORT window closes quietly
         // when it times out (the reminder line only fires if
         // the wearer is still watching for it).
@@ -1499,7 +1513,6 @@ default
         // honest), then the 15 s partial flush (exactly one
         // line per queued agent, whatever the dataserver
         // managed to answer), then the census deadline.
-        integer now = llGetUnixTime();
         integer i;
         integer errStale = 0;
         for (i = llGetListLength(gPending) - 6; i >= 0; i -= 6)
