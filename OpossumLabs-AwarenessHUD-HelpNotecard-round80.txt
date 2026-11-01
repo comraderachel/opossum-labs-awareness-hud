@@ -64,8 +64,8 @@ Power Button: GREEN means monitoring is ON. Click it to pause
   does no region counting at all, and Summary, List All and
   Watch+ politely refuse until you turn it back on - just
   click the power button again. Everything else (Status,
-  Debug, Manual Add, Watch-, Watch List, Export, Import) keeps
-  working while it is off.
+  Debug, Manual Add, Watch-, Watch List) keeps working while
+  it is off.
   While the power light BLINKS, the HUD is fetching account
   data (a List All you just clicked, or the one-line summary
   after arriving in a region) - that is it thinking, not a
@@ -141,19 +141,10 @@ Area: where and how wide the HUD watches, in two steps.
   as it was.
   In Parcel scope, walking into a new parcel is silent - you
   only hear about people who arrive after you.
-Export: sends your watch list to chat so you can move it to
-  another copy of this HUD (a replacement unit after an
-  update, a fresh backup). The list prints in your chat AND is
-  announced on a private transfer channel - see Import below.
-  Both the HUD you export FROM and the HUD you import INTO
-  must be worn by the same you (same owner).
-Import: listens for an Export from another copy of the HUD for
-  60 seconds. Wear both copies, click Settings > Export on the
-  old one, then Settings > Import on the new one - the watch
-  list transfers across, one entry at a time. Entries that are
-  already on the list are quietly skipped, the list is capped
-  at 20, and nothing else (settings, encounters) is copied -
-  the import window closes by itself after 60 seconds.
+(Moving your watch list to another copy of this HUD - for
+  example a replacement unit after an update - is not built
+  into this version. A backup and transfer feature is planned
+  for a future update.)
 Encounters: shows how long the encounter history is kept -
   30 days, fixed. Older entries are removed automatically
   (see section 6).
@@ -238,9 +229,10 @@ Tips:
   name links, numbered, six per page - click the number
   button that matches the name to remove that entry (the
   "More" button flips to the next page). No typing needed.
-- Moving your list to another copy of the HUD? Use
-  Settings > Export on the old one and Settings > Import on
-  the new one (both worn by you) - see section 4.
+- Moving your list to another copy of the HUD? That is not
+  built into this version - a backup feature is planned for a
+  future update. For now, re-add your entries with Watch+ or
+  Manual Add on the new copy.
 - Watched people are announced when they enter or leave the
   region you are in; ALWAYS region-wide, no matter which Area
   you picked (Parcel, Region, or Radius). A smaller Area only
@@ -441,11 +433,9 @@ itself and survive script resets. "Wipe" in the menu erases
 everything and restores the defaults.
 
 To move your watch list to another copy of the HUD (for
-example a replacement unit after an update), use
-Settings > Export on the old copy and Settings > Import on
-the new one - both worn by you at the same time. Encounters
-and other settings do not transfer; the watch list is the
-migration.
+example a replacement unit after an update), re-add your
+entries with Watch+ or Manual Add on the new copy. A built-in
+backup and transfer feature is planned for a future update.
 
 NOTE: If your viewer crashes, the very last changes may not
 have been saved yet.

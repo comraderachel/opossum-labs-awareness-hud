@@ -7,14 +7,17 @@
 // live lookups returned "Unknown Avatar" for anyone not in
 // the region - the body renders links for absent avatars
 // too), the Settings menu loses the Encounters retention
-// picker (30 days is now a fixed constant) and gains Export
-// / Import (watch-list migration between two of your HUDs),
-// the Trace toggle is cut with the trace mode everywhere, the
+// picker (30 days is now a fixed constant), the Trace
+// toggle is cut with the trace mode everywhere, the
 // census line renders the new "and N more" / busy-context
 // fields, the low-memory self-report writes the error ring
 // when this script's heap sags below 2500 (the 1170-free red
 // canary had no telemetry to explain it), and the boot line
-// gains the build stamp.
+// gains the build stamp. (Mid-field amendment: the Export /
+// Import watch-list migration buttons that also shipped in
+// this round are REMOVED - they never worked; backup
+// abilities return in a later round, planned as sync with
+// a web management page. See the VERSION block.)
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Companion Script (any prim)
 // ------------------------------------------------------------
@@ -35,8 +38,9 @@
 //     RETENTION CUT: the 7/14/30/60/90-day picker and the
 //     encdays preference are gone - encounters keep a fixed
 //     30 days (the constant), the Settings menu is Area /
-//     Debug / Export / Import / Wipe / Back, and gMenu level
-//     8 dies with showEncKeepMenu. (3) TRACE CUT: the toggle
+//     Debug / Wipe / Back (the Export / Import buttons that
+//     shipped here are removed mid-field - see (7)), and
+//     gMenu level 8 dies with showEncKeepMenu. (3) TRACE CUT: the toggle
 //     and the click narration are deleted everywhere (the
 //     debug rings won the diagnosis war - the r79 field
 //     follow-ups ran entirely on rings). (4) THE "C" LINE
@@ -63,7 +67,21 @@
 //     shows different builds on its lines - the support
 //     rationale behind per-script builds). This script's own
 //     reply carries its build too, and an old-shape reply
-//     prints cleanly without the suffix.
+//     prints cleanly without the suffix. (7) MID-FIELD
+//     AMENDMENT - EXPORT / IMPORT REMOVED (Rachel's report:
+//     "the import and export options in the settings menu do
+//     not seem to work" - they never did): this script sent
+//     the button labels verbatim ("Export" / "Import") while
+//     the Registrar's sweep-ask handler matched UPPERCASE,
+//     and LSL comparison is case-sensitive - the buttons
+//     were dead on arrival and did nothing. Removed rather
+//     than fixed, per Rachel's call; the Settings menu drops
+//     the two buttons and this dispatch branch dies with
+//     them. Backup abilities return in a later round,
+//     planned as sync with a web management page. LESSON:
+//     cross-script wire strings must be checked sender-vs-
+//     receiver - the audit battery is blind to case
+//     mismatches across scripts.
 //   round 79: THE PICK BUILD LEAVES, AND THE TEXT VALVE
 //     LIGHTENS. Two Companion Stack-Heap Collisions in one
 //     field evening (both in the Watch+ pick build - the
@@ -1065,16 +1083,18 @@ showSettingsMenu()
 {
     // Configuration submenu, reached from the main menu. Round
     // 80: the Encounters retention picker is CUT (encounters
-    // keep a fixed 30 days - the constant), and Export /
-    // Import join the menu (watch-list migration between two
-    // HUDs with the same owner: the buttons ask the REGISTRAR,
-    // which owns the transfer channel and the keys).
+    // keep a fixed 30 days - the constant). Mid-field
+    // amendment: the Export / Import buttons are REMOVED -
+    // they never worked (this script sent the labels verbatim
+    // while the Registrar matched UPPERCASE - LSL comparison
+    // is case-sensitive, so the sweep-ask branches were dead
+    // on arrival). Backup abilities return in a later round,
+    // planned as sync with a web management page.
     gMode = 0;
     gMenu = 1;
     llDialog(llGetOwner(),
         "Settings\n" + uiStatus(),
-        ["Area", "Debug", "Export",
-         "Import", "Wipe", "Back"],
+        ["Area", "Debug", "Wipe", "Back"],
         gChannel);
 }
 
@@ -1500,16 +1520,6 @@ default
             // this button only ever shows the log now (kept a
             // fixed 30 days).
             encShow();
-            return;
-        }
-        if (msg == "Export" || msg == "Import")
-        {
-            // Round 80: watch-list migration between two HUDs
-            // with the same owner - the REGISTRAR owns the
-            // transfer channel and the watch-list mirror, so
-            // this only asks (the same one-line pattern as the
-            // "NEAR" request).
-            llMessageLinked(LINK_SET, LM_SWEEP_ASK, msg, "");
             return;
         }
         if (msg == "Watch+")

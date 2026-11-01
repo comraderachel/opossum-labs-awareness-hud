@@ -8,11 +8,13 @@
 // 10.8K, below its own old guard at rest), the census fit-cap
 // ("and N more (low memory)" instead of silent truncation),
 // OFF = true standby (Summary / List All / Watch+ refuse while
-// the power is off; Status, Debug, watch-list edits and
-// Export/Import stay available), the busy-context lines built
-// from the new SMH.cap publish, the memory-aware arrival-ask
-// cap, watch-list Export/Import two-unit radio transfer, the
-// trace mode cut, and the build stamp.
+// the power is off; Status, Debug and watch-list edits stay
+// available), the busy-context lines built from the new
+// SMH.cap publish, the memory-aware arrival-ask cap, the
+// trace mode cut, and the build stamp. (The Export / Import
+// radio that also shipped in this round was REMOVED mid-field
+// - the buttons never worked, and backup abilities return in
+// a later round; see the VERSION block.)
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Registrar Script (any prim)
 // ------------------------------------------------------------
@@ -82,9 +84,9 @@
 //     the Data Script's r74/r76 probe learned to nudge
 //     through. Round 80 also: OFF is a true standby (the
 //     Summary / List All / Watch+ entries refuse with a
-//     reminder while the power is off), and the watch list
-//     migrates between units by the Export / Import radio
-//     (owner-key-derived channel, 60-second import window).
+//     reminder while the power is off). (The watch-list
+//     Export / Import radio that also shipped here was
+//     removed mid-field - see the VERSION block.)
 //
 // WHAT STAYS IN THE DATA SCRIPT (its r79 end state): the 2 s
 // detection sweep, the tracked-key pad, the valve / ladder /
@@ -207,8 +209,8 @@
 // supersedes r79's paused-region semantics for the POWER
 // state): while the detector is off, Summary / List All /
 // Watch+ refuse with a one-line reminder; Status, Debug,
-// Manual Add, Watch- removals, the Watch List view and
-// Export/Import keep working. The adopt census cannot fire
+// Manual Add, Watch- removals and the Watch List view keep
+// working. The adopt census cannot fire
 // while OFF anyway (the Data Script only sweeps when ON).
 // (5) BUSY CONTEXT ON DEMAND: the Data Script publishes
 // SMH.cap on cap change; the List All preamble and the
@@ -219,8 +221,9 @@
 // memory-aware - clamp((free - 4500) / 160, 8, 36) rows -
 // so a busy arrival flood stacks at most what the heap can
 // pay, and the overflow still sends the partial-data line
-// the timeout flush always produced. (7) EXPORT / IMPORT:
-// the watch list migrates between two HUDs by radio -
+// the timeout flush always produced. (7) EXPORT / IMPORT -
+// REMOVED MID-FIELD (kept for history): the watch list
+// migrated between two HUDs by radio -
 // Export prints the keys to owner chat AND announces the
 // CSV on an owner-key-derived deep-negative channel;
 // Import arms a 60-second listener on the same channel and
@@ -255,7 +258,25 @@
 // counters - so it costs no census rows); the born-date
 // asks stay trimmed to the fit. Watch DETECTION was never
 // capped - the Data script's WATCHED lines still cover the
-// whole region.
+// whole region. FOURTH AMENDMENT, MID-FIELD (Rachel's report:
+// "the import and export options in the settings menu do not
+// seem to work" - and they never did): the Companion sent the
+// button labels VERBATIM ("Export" / "Import") while this
+// script's sweep-ask handler matched UPPERCASE ("EXPORT" /
+// "IMPORT") - LSL string comparison is case-sensitive, so
+// the branches were dead on arrival and the buttons did
+// nothing. REMOVED rather than fixed, per Rachel's call:
+// backup abilities return in a later round, planned as sync
+// with a web management page. Cut from this script:
+// doExport(), doImport(), the ownerChannel() transfer
+// channel, the gImpHandle / gImpDeadline globals, the
+// timer's import-window check, the listen-event import
+// receiver and the two sweep-ask branches. Core is
+// untouched - its "ADD|key" handler stays (Manual Add uses
+// it). LESSON for the future backup work: cross-script wire
+// strings must be checked sender-vs-receiver - the audit
+// battery (balance, ll-name, type-trap, undeclared) is blind
+// to case mismatches across scripts.
 //
 // VERSION: round 79 (2026-10-31): THE 4TH-SCRIPT SPLIT,
 // PART 2 - THE ARCHITECTURAL FINISH. The five planned items,
@@ -456,59 +477,15 @@ integer gChannel = -1; // random per-boot dialog channel (the
                      // round-25 pattern: a listener must
                      // register the exact number, so no
                      // precomputation is possible)
-integer gImpHandle; // round 80: the IMPORT listener's handle
-integer gImpDeadline; // round 80: unix time the import window
-                     // ends (0 = not armed)
 
-integer ownerChannel()
-{
-    // Round 80: the watch-list TRANSFER channel - deterministic
-    // and derived from the OWNER KEY, so both HUD units compute
-    // the same deep-negative number while nobody else lands on
-    // it. Avatars cannot type on negative channels at all, so
-    // only scripts ever speak here, and the import listener
-    // only accepts objects whose llGetOwnerKey matches.
-    return -1000000000 -
-        (integer)("0x" + llGetSubString((string)llGetOwner(), 0, 6));
-}
-
-doExport()
-{
-    // Round 80: watch-list migration, SENDING side. The keys
-    // print to owner chat (copyable by hand into Manual Add)
-    // AND announce as a CSV on the transfer channel - a second
-    // HUD with the SAME owner catches them with Import armed.
-    // Works while the detector is off: it is configuration,
-    // not detection.
-    integer n = llGetListLength(gWatch);
-    if (n == 0)
-    {
-        llOwnerSay("The watch list is empty - nothing to export.");
-        return;
-    }
-    string csv = llDumpList2String(gWatch, ",");
-    // 20 keys x 37 bytes = ~759 - one owner-chat line, well
-    // under llOwnerSay's 1024-byte cap.
-    llOwnerSay("Watch list export (" + (string)n + " keys): " + csv);
-    llRegionSay(ownerChannel(), "SMHEXPORT|" + csv);
-    llOwnerSay("Export sent - press Import on the other HUD (same owner) within 60 seconds.");
-}
-
-doImport()
-{
-    // Round 80: watch-list migration, RECEIVING side. Arms a
-    // 60-second listener on the transfer channel; a same-owner
-    // HUD's "SMHEXPORT|" CSV feeds each key to Core's EXISTING
-    // "ADD|key" handler - dedupe, the cap of 20 and the save
-    // are all Core's, so this needs ZERO Core changes. Re-
-    // pressing Import restarts the window. Works while the
-    // detector is off (configuration, not detection).
-    if (gImpDeadline != 0)
-        llListenRemove(gImpHandle);
-    gImpHandle = llListen(ownerChannel(), "", NULL_KEY, "");
-    gImpDeadline = llGetUnixTime() + 60;
-    llOwnerSay("Import listening for 60 seconds - press Export on the other HUD now. Both HUDs must have the same owner.");
-}
+// (Mid-field amendment: the Export / Import watch-list radio
+// is REMOVED - gImpHandle, gImpDeadline, ownerChannel(),
+// doExport() and doImport() lived here. The buttons never
+// worked: the Companion sent the labels verbatim ("Export" /
+// "Import") while the sweep-ask handler matched UPPERCASE,
+// and LSL comparison is case-sensitive. Backup abilities
+// return in a later round, planned as sync with a web
+// management page - see the VERSION block.)
 
 string memPct(integer freeBytes)
 {
@@ -1140,8 +1117,8 @@ startScan()
     // Round 80: OFF IS STANDBY - the power state mirrors here
     // (LM_UI_STATE), and a listing is detection work, so it
     // refuses with the reminder while the detector is off.
-    // (Status, Debug, watch-list edits and Export/Import stay
-    // available - they are configuration, not detection.)
+    // (Status, Debug and watch-list edits stay available -
+    // they are configuration, not detection.)
     if (gHaveState && !gEnabled)
     {
         llOwnerSay("The detector is off - click the power button to turn it back on.");
@@ -1514,21 +1491,16 @@ default
 
     timer()
     {
-        // Pre-field amendment fix: "now" is declared BEFORE the
-        // import-window check - the first draft used it above
-        // its declaration and LSL rejected the name (Rachel's
-        // paste found it; the balance and ll-name audits cannot
-        // see undeclared variables).
+        // Shared clock for every timer check below (the stale
+        // purge, the 15 s flush and the census deadline all
+        // read it). Declared FIRST because LSL rejects a use
+        // above the declaration - Rachel's paste found the
+        // first draft doing exactly that (the balance and
+        // ll-name audits cannot see undeclared variables).
         integer now = llGetUnixTime();
-        // Round 80: the 60-second IMPORT window closes quietly
-        // when it times out (the reminder line only fires if
-        // the wearer is still watching for it).
-        if (gImpDeadline != 0 && now >= gImpDeadline)
-        {
-            llListenRemove(gImpHandle);
-            gImpDeadline = 0;
-            llOwnerSay("Import window closed - press Import, then Export on the other HUD, to try again.");
-        }
+        // (The 60-second IMPORT window check that opened this
+        // timer is gone with the Export / Import removal - see
+        // the VERSION block.)
         // Pipeline maintenance, mirrored from the old Data
         // Script's timer, now for BOTH row kinds: a stale purge
         // first (rows past STALE_DROP can only predate this
@@ -1732,10 +1704,6 @@ default
                 askAgent((key)llGetSubString(str, 5, -1), "A");
             else if (str == "NEAR")
                 doWatchPlus();
-            else if (str == "EXPORT")
-                doExport();
-            else if (str == "IMPORT")
-                doImport();
             return;
         }
 
@@ -1777,33 +1745,10 @@ default
 
     listen(integer channel, string name, key id, string msg)
     {
-        // Round 80: the IMPORT receiver first - the transfer
-        // channel is NOT the dialog channel. Only the owner's
-        // OWN objects are accepted (llGetOwnerKey), and only
-        // while a 60-second window is armed.
-        if (gImpDeadline != 0 && channel == ownerChannel())
-        {
-            if (id != NULL_KEY && llGetOwnerKey(id) == llGetOwner() &&
-                llGetSubString(msg, 0, 9) == "SMHEXPORT|")
-            {
-                list keys = llParseString2List(
-                    llDeleteSubString(msg, 0, 9), [","], []);
-                integer i;
-                for (i = 0; i < llGetListLength(keys); i++)
-                {
-                    // Core's existing ADD handler validates,
-                    // dedupes, caps at 20 and saves - the whole
-                    // normal Manual Add path, unchanged.
-                    llMessageLinked(LINK_SET, LM_UI_CMD,
-                        "ADD|" + llList2String(keys, i), "");
-                }
-                llListenRemove(gImpHandle);
-                gImpDeadline = 0;
-                llOwnerSay("Import received " + (string)llGetListLength(keys) +
-                    " key(s) - duplicates are skipped by the watch list itself; the cap is 20.");
-            }
-            return;
-        }
+        // (Mid-field amendment: the IMPORT receiver that opened
+        // this event is removed with the Export / Import cut -
+        // see the VERSION block. This event now only serves the
+        // Watch+ pick dialog.)
         // Watch+ pick dialog (round 79): this script's own deep
         // random channel (round-25 pattern). Only the owner
         // speaks here, and only via the dialog we offered.
