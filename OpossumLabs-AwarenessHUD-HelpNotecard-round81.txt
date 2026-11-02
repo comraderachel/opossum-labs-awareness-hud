@@ -1,0 +1,547 @@
+==========================================================================
+                        OPOSSUM LABS AWARENESS HUD
+                        HELP GUIDE - VERSION 1.0
+==========================================================================
+
+CONTENTS
+
+  1.  What this HUD does
+  2.  First-time setup
+  3.  What the buttons do
+  4.  The menu
+  5.  The watch list
+  6.  Encounters
+  7.  Understanding the alerts
+  8.  The ping sound
+  9.  Traveling
+  10. Settings and memory
+  11. Making changes to the HUD
+  12. Troubleshooting
+
+--------------------------------------------------------------------------
+1. WHAT THIS HUD DOES
+--------------------------------------------------------------------------
+Wear it and it quietly watches the parcel or region you are in
+(or a radius around you) for avatars coming and going. When
+someone new arrives, you get a private message with their
+account age, payment status, and viewer language. You can also
+keep a watch list of specific people and be told when they enter
+or leave the region.
+
+Only YOU see any of this: nothing is said out loud and nobody
+nearby can tell you are wearing it.
+
+--------------------------------------------------------------------------
+2. FIRST-TIME SETUP
+--------------------------------------------------------------------------
+The first time you wear this HUD - and again after a Wipe or a
+change of owner - it greets you a few seconds after it boots and
+asks where you want it to watch (Parcel / Region / Radius, then
+a size if you pick Radius). The dialog suggests Parcel, but you
+can pick whichever you prefer. Clicking Ignore keeps the defaults
+(Parcel, monitoring ON) and it will not ask again.
+
+NOTE: In very busy areas (clubs, big events), Region scope can
+only track the first few dozen arrivals - the exact number adapts
+to how much memory the HUD has free - so Parcel is usually the
+better choice there.
+
+The HUD also seats itself on your screen: the first time you
+wear it, and each time you move it to a DIFFERENT HUD position,
+it hops to a sensible spot for that position so it is never
+stuck half off the screen. Its designed home is the TOP RIGHT
+HUD position - attach it there for the neatest fit. After the
+first seating it leaves you alone - drag it wherever you like,
+and the viewer remembers your position for that HUD position.
+(If you attach it to a body part instead of a HUD position, it
+warns you and stays put until you attach it properly.)
+
+--------------------------------------------------------------------------
+3. WHAT THE BUTTONS DO
+--------------------------------------------------------------------------
+Power Button: GREEN means monitoring is ON. Click it to pause
+  (it turns RED). While OFF, the HUD is in true standby: it
+  does no region counting at all, and Summary, List All and
+  Watch+ politely refuse until you turn it back on - just
+  click the power button again. Everything else (Status,
+  Debug, Manual Add, Watch-, Watch List) keeps working while
+  it is off.
+  While the power light BLINKS, the HUD is fetching account
+  data (a List All you just clicked, or the one-line summary
+  after arriving in a new region or parcel) - that is it
+  thinking, not a fault. It works like a disk activity light
+  on a computer: it blinks ONLY while data is being fetched,
+  never during the routine detection sweep that runs every
+  few seconds (or it would never stop blinking).
+
+Help Button: gives you this notecard.
+
+Sound Button: turns the alert "ping" sound on and off. GREEN
+  means the ping is on, RED means it is off (the same colors
+  as the power button).
+
+Menu Button: opens the settings menu. This is the ONLY part of
+  the panel that opens the menu; clicking the panel body does
+  nothing (that is on purpose).
+
+--------------------------------------------------------------------------
+4. THE MENU
+--------------------------------------------------------------------------
+MAIN MENU (frequently used):
+
+Summary: prints the one-line summary you also get when entering
+  a region (avatars in scope, scripted agents, new accounts,
+  people on your watch list), any time you want it. It works
+  in any region - even one where a busy sim has detection
+  paused - because it counts everyone in scope fresh, the
+  same way List All does. In a busy region the line also
+  tells you how many people the memory cap is holding back
+  ("detection tracking the first N"), so you get the full
+  picture on demand.
+List All: lists the people currently in scope - up to 20,
+  never yourself - with the same
+  details as the arrival messages, plus how far away from
+  you they were when the list was made (e.g. " | 25m away").
+  Lines appear as each person's account data arrives, and
+  the power button blinks while fetching. The list is made
+  fresh from the region itself by the HUD's listing script,
+  so it also works in regions where a busy sim has detection
+  paused - the list is everyone in scope NOW. A preamble
+  notes when a busy-region cap is in effect.
+Watch+: add someone to your watch list (see section 5).
+Watch-: remove someone from your watch list.
+Watch List: show your watch list (each entry shows the avatar's
+  key next to the name).
+Encounters: shows where and when you have run into people on
+  your watch list, plus automated agents (see section 6).
+Status: quick summary of on/off, Area (where the HUD is
+  watching), watch count, and whether the Data Script is
+  still running. The line ends with the build number
+  (e.g. "Build:110126080") - quote it when reporting an
+  issue. (Memory is NOT here
+  anymore - use Settings > Debug > Status Check for that.)
+Settings: opens the settings submenu (below).
+
+Things the panel already has buttons for (Power, Help, and the
+Sound ping) are not repeated in the menus.
+
+SETTINGS SUBMENU:
+
+Area: where and how wide the HUD watches, in two steps.
+  Step 1 asks WHERE:
+  - Parcel: the parcel you are standing on. This is the
+    default for a new HUD and the suggested choice.
+  - Region: the whole region you are in. In very busy areas
+    it can only track the first few dozen arrivals (the
+    number adapts to free memory).
+  - Radius: a sphere around you that travels with you.
+  Whichever you pick, the watch list is always checked against
+  the whole region - the Area setting only narrows the ordinary
+  arrival notices.
+  If you pick Radius, step 2 asks HOW WIDE: 10m, 25m, 50m,
+  100m, or Custom (a pop-up text box). Nothing changes until
+  you pick a size - if you press Back instead, your scope stays
+  as it was.
+  In Parcel scope, walking into a new parcel counts as
+  arriving: the HUD first says "New parcel detected", then
+  prints the one-line summary of the new parcel's people
+  (see section 9).
+(Moving your watch list to another copy of this HUD - for
+  example a replacement unit after an update - is not built
+  into this version. A backup and transfer feature is planned
+  for a future update.)
+Encounters: shows how long the encounter history is kept -
+  30 days, fixed. Older entries are removed automatically
+  (see section 6).
+Debug: opens the diagnostics submenu:
+  Status Check: a troubleshooting report with the HUD
+  version, your current settings, the private chat channel,
+  the linkset-data space, and one memory line for each of
+  the four scripts, each as "N free (P% used) | Build:
+  110126080" - the build number on each line tells you
+  which build EACH script is running (they should all
+  match). The
+  four memory lines can appear in any order - but a script
+  that has halted shows NO line at all, and that gap is
+  itself the diagnosis. The report also lists recent known errors,
+  such as account-data lookups that got no reply from the
+  servers (a small rotating log that Wipe clears), and
+  history notes about freezes: a tally of times the HUD
+  could not run while worn ("starved the HUD N time(s),
+  longest Xs") and any stretch of 5 minutes or more with no
+  detection pass at all. With Debug Log also on, the report
+  ends with the listing script's recorded events - its boot
+  number and any refused or interrupted listings. They
+  record times the sim was too
+  busy to schedule the HUD, or it was detached, or you were
+  logged out - notes for the curious, not errors.
+  Debug Log: turns event recording on or off (the dialog
+  shows the current state). While on, the scripts record
+  their important moments to a rotating on-HUD log - boot
+  memory numbers, pipeline gaps, valve trips with the
+  memory numbers at the moment of pausing, and the paused
+  probe's before/after readings; the listing script records
+  its boot number and any refused or interrupted listings.
+  Leave it off normally;
+  recording costs a little script memory.
+  Dump Log: prints the recorded log to your chat, oldest
+  first - copy the block whole when reporting an issue.
+  (The listing script's story prints with Status Check while
+  Debug Log is on, so one Status Check captures everything.)
+Wipe: erase ALL saved settings, the watch list and the
+  troubleshooting history (the error log and the freeze and
+  gap records that Status Check reports), then reset all
+  four scripts (you will see the boot lines again, plus
+  one arrival summary - and the first-time welcome will appear
+  again a few seconds later). If a script halted with an error,
+  Wipe cannot restart it - take the HUD off and wear it again.
+Back: go back one level - from the Radius size dialog back to
+  Area, from Area back to Settings, from Settings back to
+  the main menu.
+
+POP-UP TEXT BOXES:
+A few HUD actions (Manual Add for a watch-list key, Custom for
+the radius size) open a small text box: type your answer, then
+click "Submit". If you close it with "Ignore", nothing happens -
+just try again. People nearby never see what you type, and
+every watch-list name is added by clicking a button.
+
+--------------------------------------------------------------------------
+5. THE WATCH LIST
+--------------------------------------------------------------------------
+Adding someone: click Watch+ in the menu. It lists the people
+closest to you (nearest first) as buttons - click a name and
+they're on the list. Need someone who is not nearby, or not
+online right now? Click "Manual Add" instead: a small text box
+pops up; paste the avatar key (UUID) into the box and click
+"Submit". (Adding someone who is already on the list just gets
+a friendly "Already watching" message - no duplicates.)
+
+An avatar key looks like this:
+
+> 12345678-9abc-def0-1234-567890abcdef
+
+Where to get a key: ask the person for their avatar key (many
+residents know theirs), or copy it from the Watch List (the
+menu's Watch List button), which shows each key next to the
+name.
+
+Tips:
+- If you close the pop-up with "Ignore", nothing happens.
+  Just click Watch+ again.
+- Pressing Enter in the box works too (or Tab, then Enter).
+- Watch- opens a dialog listing your entries as clickable
+  name links, numbered, six per page - click the number
+  button that matches the name to remove that entry (the
+  "More" button flips to the next page). No typing needed.
+- Moving your list to another copy of the HUD? That is not
+  built into this version - a backup feature is planned for a
+  future update. For now, re-add your entries with Watch+ or
+  Manual Add on the new copy.
+- Watched people are announced when they enter or leave the
+  region you are in; ALWAYS region-wide, no matter which Area
+  you picked (Parcel, Region, or Radius). A smaller Area only
+  narrows the ordinary arrival notices; the watch list always
+  covers the whole region.
+- One notice, not two: a watched person entering or leaving
+  INSIDE your Area gets the ordinary ARRIVED or LEFT line
+  with [WATCHED] - no separate "entered/left the region"
+  line. The "entered/left the region" lines only appear for
+  watch-list people who are outside your Area.
+- If YOU enter a region where someone on your list already is,
+  the HUD tells you right away:
+
+> WATCHED: Name is already in the region.
+
+--------------------------------------------------------------------------
+6. ENCOUNTERS
+--------------------------------------------------------------------------
+The HUD keeps a short history of meetings with people on your
+watch list and with automated agents (scripted agents) - both
+directions: when they enter your Area, and when you arrive
+somewhere they already are. Click Encounters in the menu to see
+it. Each entry shows the date and time (SLT - Second Life time),
+the person, the region, and the parcel they were on:
+
+> 2026-10-28 19:57 SLT - Rachel Frost - Lusk (Boardwalk)
+
+Automated agents get a tag after their name:
+
+> 2026-10-28 19:57 SLT - OpalBot Resident [AUTOMATED
+> AGENT] - Lusk (Boardwalk)
+
+- Watch-list people are logged region-wide, like their alerts;
+  automated agents are logged within your Area, like their
+  ARRIVED lines (in very busy regions the usual tracking cap
+  applies).
+- The history is kept for 30 days - a fixed window that needs
+  no setting.
+- The log holds at most 50 entries. When it is full the oldest
+  is dropped first, and entries past their keep-time are
+  removed when you view the log and at boot - so the storage
+  can never overflow.
+- Meeting the same person again in the same region within 24
+  hours is not logged twice (relogs do not fill the log).
+- Wipe erases the history, and it is cleared for a new owner
+  along with the watch list.
+
+--------------------------------------------------------------------------
+7. UNDERSTANDING THE ALERTS
+--------------------------------------------------------------------------
+A typical arrival line:
+
+> ARRIVED (region): liplip Criss | Age:17y 276d |
+> Pay:None | Lang:Japanese | 25m away
+
+If the arrival is a scripted agent (a bot), the line LEADS with
+the marker instead of hiding it at the end:
+
+> ARRIVED (region): AUTOMATED AGENT: SomeBot | Age:2d |
+> Pay:None | Lang:English
+
+Any tags (see below) close the line, after the distance:
+
+> ARRIVED (region): MayaFour | Age:1d | Pay:None |
+> Lang:Polish | 22m away [NEW ACCOUNT]
+
+Names in alert lines appear as clickable links showing the
+person's display name - click one to open their profile. The
+links are resolved by your viewer itself, so they always show
+the current display name, even for people who have already
+left. (The small dialog buttons cannot show links, so those use
+trimmed display names or numbers instead.)
+
+- Age reads as days within the first year ("Age:123d") and
+  switches to a friendlier form past it ("Age:2y 34d" means 2
+  years and 34 days).
+- The distance ("25m away") is how far they were
+  from you when the HUD announced them. It is a snapshot -
+  they may have moved since. If they left before the
+  announcement was ready, no distance is shown.
+- Pay is their payment status (the short forms mean the same
+  as the viewer's payment info wording). You may see:
+    None (no payment info on file)
+    On File
+    On File & Used
+    Previously Used
+    Unavailable (could not be read)
+- Lang is the language their viewer is set to.
+
+Other messages you may see:
+
+> LEFT (region): Name
+(The person left your scope. If they are on your watch list,
+[WATCHED] is added.)
+
+> WATCHED: Name entered the region.
+> WATCHED: Name left the region.
+(These fire only for watch-list people outside your scope. A
+watched person inside your scope gets ONE notice - the
+ARRIVED or LEFT line with [WATCHED].)
+
+> WATCHED: Name is already in the region.
+(When you arrive where they already are.)
+
+> REGION SLOWDOWN: the sim is running at NN% of normal speed.
+(Something heavy is running somewhere in the region - script
+or particle spam, physics, or sim trouble. A "Region speed
+recovered" line follows when it clears up.)
+
+> Scanning was paused for 10m - usually a parcel with
+> scripts disabled (the HUD cannot run there) or a sim too
+> busy to run it. Scanning has resumed.
+(Explains a silent stretch AFTER the fact. Some parcels have
+scripts disabled: while you stand there, Second Life stops
+every script in the HUD, so it cannot speak up until you
+leave. An overloaded sim can stall it too. The line arrives
+the moment the HUD is running again - see section 9.)
+
+> Detection resumed after about N minute(s) - the HUD is ON
+> and a region summary follows.
+(After you log back in wearing the HUD (or it could not run
+for five minutes or more), it says this once and then prints
+the usual region summary, so you know it is awake and working
+again.)
+
+Tags and markers you may see:
+
+AUTOMATED AGENT: at the START of a line means a scripted
+  agent (a bot) - it leads the line so you cannot miss it.
+[NEW ACCOUNT]: the account is less than 7 days old.
+[WATCHED]: the person is on your watch list.
+(The two bracketed tags close the line, after the distance.)
+
+The Pay: field itself already shows "None" when there is no
+payment info, so there is no extra tag for it, but it still
+counts as a flag for the ping sound.
+
+--------------------------------------------------------------------------
+8. THE PING SOUND
+--------------------------------------------------------------------------
+For the Ping setting to make a sound, the HUD must contain a
+sound item named exactly:
+
+> notification
+
+Your HUD already ships with a "notification" sound inside, so
+the ping works out of the box. Want a different alert sound?
+The HUD object is modify: open the HUD's contents, remove the
+sound named "notification", put in any sound you like, and
+rename it "notification". On a HUD, sounds are heard only by
+you.
+
+--------------------------------------------------------------------------
+9. TRAVELING
+--------------------------------------------------------------------------
+The HUD follows you. When you cross a region border, teleport,
+or (in Parcel scope) walk into a new parcel, it quietly resets
+its baseline. Instead of flooding you with "arrived" messages
+for everyone already there, it says ONE line first:
+
+> New region detected - counting who is here now. The power
+> button blinks while the HUD fetches account data; a summary
+> follows.
+
+("New parcel detected" in Parcel scope.) That way you know the
+HUD noticed the move even though the summary takes a few
+seconds to build - the power button blinks like a disk
+activity light the whole time. Then it prints ONE summary
+line: the total number of avatars in scope, how many are
+flagged as scripted agents, how many are new accounts, and how
+many are on your watch list. In very busy areas the HUD tracks
+only the first few dozen people - the number adapts to free
+memory - and you see that note ONCE when you arrive ("Very busy
+region - detection tracking the first N"), not repeatedly.
+Summary and List All remind you of the cap on demand whenever
+it is in effect. Your watch list is always checked against
+everyone in the region, no matter how busy it is. You only hear
+full details about people who arrive AFTER you do. (While the
+summary is being prepared, the power button blinks; if a fetch
+ever gets stuck, the blink stops by itself after 3 minutes.)
+
+If script memory runs very low in a busy region, arrival and
+watch alerts pause (one line tells you so) and come back on
+their own as the region quiets down - the pause protects the
+HUD from crashing. The summary keeps working for a quick
+count. Settings > Debug > Status Check shows the
+live memory numbers.
+
+Some parcels have SCRIPTS DISABLED (welcome areas, infohubs,
+and some public sandboxes are set up that way). Second Life
+stops every script in the HUD while you stand there: no text,
+no menus, nothing at all - the reset option cannot work
+either, because no script is running to receive it. That is
+normal behavior for attached scripts, not a fault with the
+HUD. Walk or fly into a neighboring parcel that allows
+scripts and the HUD wakes up by itself, prints the
+"Scanning was paused" line to explain the quiet stretch, and
+carries on where it left off. (Nothing is lost; detection
+simply resumes. If the quiet stretch was five minutes or
+more - like a logout - the HUD says "Detection resumed"
+first, then prints a fresh summary.)
+
+--------------------------------------------------------------------------
+10. SETTINGS AND MEMORY
+--------------------------------------------------------------------------
+Your settings and watch list are saved inside the HUD object
+itself and survive script resets. "Wipe" in the menu erases
+everything and restores the defaults.
+
+To move your watch list to another copy of the HUD (for
+example a replacement unit after an update), re-add your
+entries with Watch+ or Manual Add on the new copy. A built-in
+backup and transfer feature is planned for a future update.
+
+NOTE: If your viewer crashes, the very last changes may not
+have been saved yet.
+
+If you sell or give the HUD to someone else, your personal
+watch list is cleared automatically for the new owner.
+
+--------------------------------------------------------------------------
+11. MAKING CHANGES TO THE HUD
+--------------------------------------------------------------------------
+The HUD object itself is modify, so you can customize it - but
+the scripts inside find the parts BY NAME. Renaming any prim,
+unlinking the prims, or deleting one will break the HUD (the
+buttons stop working, or detection stops). The scripts are
+locked (no-modify), so that wiring cannot be fixed from the
+outside. The HUD holds four scripts - Core Script (root
+prim), Companion Script, Data Script and Registrar Script -
+and the Wipe button finds the last three BY their exact
+inventory names.
+
+Before you make any changes like these, make a copy of the
+HUD in your inventory first (right-click it and choose Copy, or
+press Ctrl+Shift+C with it selected). That way you can always
+go back to the working original if something stops working.
+
+Safe to do at any time: moving the HUD around your screen - the
+viewer remembers the position, and the HUD never fights you
+for it. (The one thing it does on its own: if you MOVE it to a
+different HUD position - say from bottom-left to top-right -
+it seats itself once for that new position, then leaves you
+alone again.)
+
+--------------------------------------------------------------------------
+12. TROUBLESHOOTING
+--------------------------------------------------------------------------
+1. Help Button says no notecard found.
+   The HUD must contain a notecard named exactly
+   "Awareness Hud Help". Capital letters matter!
+
+2. Menu does not open.
+   The menu prim must be named exactly "Menu Button" in the
+   Edit window.
+
+3. A button does nothing.
+   The four button prims must be named exactly: Power Button,
+   Help Button, Sound Button, and Menu Button.
+
+4. No ping sound.
+   Check that a sound named "notification" is in the HUD
+   contents, and that Ping is ON (Sound Button green, not
+   red).
+
+5. The HUD is partly or fully off the screen.
+   Chat the reseat command on the HUD's private channel and
+   it hops back to its default seat on the right edge. The
+   channel is printed in the boot greeting (look for the
+   "reseat" hint at the end of the boot line) and in Status
+   Check. The command is the channel number, a space, then
+   the word reseat:
+
+   > /-1234567890 reseat
+
+   (your channel number will differ). Re-attaching the HUD to
+   the Top Right HUD position does the same thing.
+
+6. The whole HUD went silent: buttons do nothing and there
+   is no text at all. (That is different from the blinking
+   power light, which just means the HUD is fetching data.)
+   First check WHERE you are standing: a parcel with
+   scripts disabled (welcome areas, infohubs, some public
+   sandboxes) stops every script in the HUD - no text, no
+   menus, and the reset option cannot work either. That is
+   normal Second Life behavior, not a fault. Walk or fly
+   into a parcel that allows scripts and the HUD wakes up
+   by itself, explains the pause, and carries on.
+   If you are NOT in a scripts-disabled parcel, it is a
+   known Second Life scheduling glitch, not a problem with
+   the HUD or your settings. Try these in order:
+   - Cross into one more region, or teleport somewhere.
+     That usually wakes it up.
+   - Still silent? Take the HUD off, rez it on the ground,
+     take it back into your inventory, and wear it again.
+   - Still silent? Wear a fresh copy from your inventory
+     (the backup copy you made before making changes).
+   Once it wakes up it catches up on its own, and no
+   settings are lost.
+
+==========================================================================
+
+Enjoy your travels!
+
+Made by Opossum Labs
+
+==========================================================================

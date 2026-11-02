@@ -11,15 +11,16 @@ memory only. No external services, no backend, nothing leaves the object.
 | File | Role | Round |
 |---|---|---|
 | `OpossumLabs-AwarenessHUD-CoreScript-round80.lsl` | Settings, watch list, panel buttons, persistence, reseat recovery | 80 |
-| `OpossumLabs-AwarenessHUD-DataScript-round80.lsl` | Detection engine - arrivals, sweeps, watch alerts | 80 |
+| `OpossumLabs-AwarenessHUD-DataScript-round81.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
 | `OpossumLabs-AwarenessHUD-RegistrarScript-round80.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching | 80 |
 | `OpossumLabs-AwarenessHUD-CompanionScript-round80.lsl` | Menus, dialogs, owner chat output | 80 |
-| `OpossumLabs-AwarenessHUD-HelpNotecard-round80.txt` | In-world help notecard | 80 |
+| `OpossumLabs-AwarenessHUD-HelpNotecard-round81.txt` | In-world help notecard | 81 |
 
 The scripts are paired as a set: update all changed scripts together,
-following the ROUND header at the top of each file. Round 80 is the
-current release (Data and Core are unchanged from the earlier round-80
-paste; Registrar, Companion and the notecard carry the mid-field
-export/import removal).
+following the ROUND header at the top of each file. Round 81 is the
+current release (the Data script and the help notecard carry the
+arrival pre-line - "New region detected / New parcel detected" before
+the arrival summary - and the Parcel-scope parcel-change summary;
+Core, Registrar and Companion are unchanged from round 80).
 
 Private repository - retail product source. Do not redistribute.
