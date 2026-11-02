@@ -8,25 +8,24 @@ memory only. No external services, no backend, nothing leaves the object.
 
 ## Files
 
-| File | Role | Round |
+| File | Role | Current version |
 |---|---|---|
-| `OpossumLabs-AwarenessHUD-CoreScript-round82.lsl` | Settings, watch list, panel buttons, power-light vocabulary, failure sweep, persistence, reseat recovery | 82 |
-| `OpossumLabs-AwarenessHUD-DataScript-round81.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
-| `OpossumLabs-AwarenessHUD-RegistrarScript-round82.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat | 82 |
-| `OpossumLabs-AwarenessHUD-CompanionScript-round82.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog | 82 |
-| `OpossumLabs-AwarenessHUD-HelpNotecard-round82.txt` | In-world help notecard | 82 |
+| `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power-light vocabulary, failure sweep, persistence, reseat recovery | 82 |
+| `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
+| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat | 82 |
+| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog | 82 |
+| `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | 82 |
 
 The scripts are paired as a set: update all changed scripts together,
-following the ROUND header at the top of each file. Round 82 is the
-current release: the power button learns a vocabulary - solid YELLOW when
-detection is narrowed (busy region or low memory; the watch list stays
-fully covered either way), a BLINKING YELLOW when a fetch runs past 30
-seconds, and a BLINKING RED plus a chat line when a script has stopped or
-is not responding. Core runs a 5-second failure sweep over all three
-worker scripts (missing, halted, or hung - the Registrar and Companion
-now publish liveness heartbeats for it), and the Companion runs a
-watchdog that blinks the light red if Core itself ever goes silent. The
-Data script is unchanged from round 81 (arrival pre-line and
-parcel-scope arrival summary).
+following the ROUND header at the top of each file.
+
+## Tracking changes
+
+Each file keeps its name across releases: a new round lands as a commit
+that UPDATES the existing files, so the commit history shows exactly what
+was added or removed from round to round. The ROUND header at the top of
+each script (and the per-script Build number on the HUD's Status Check)
+identify which round a running copy is. Current release: round 82 (the
+Data script is unchanged since round 81).
 
 Private repository - retail product source. Do not redistribute.
