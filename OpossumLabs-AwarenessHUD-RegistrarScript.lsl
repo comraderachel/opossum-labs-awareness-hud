@@ -1,16 +1,20 @@
 
-// ROUND 82 (2026-11-02) - paste the whole script over the old
-// one. PAIRED with the round-82 Core AND Companion Scripts
-// (the Data Script is UNCHANGED from round 81 - do not touch
-// it) and the round-82 help notecard. This round is small
-// here: the liveness heartbeat. This script now publishes
-// SMH.rhb on every timer pass so the Core Script's new
-// failure sweep can tell a HUNG Registrar (scheduled but
-// stuck - llGetScriptState still reports those as running)
-// from a healthy one; when it hangs, the power button
-// blinks red and a chat line names this script. Core treats
-// a never-written heartbeat as UNKNOWN, so this script also
-// fails safe in a mixed-round unit.
+// ROUND 83 (2026-11-03) - paste the whole script over the old
+// one. Registrar ONLY this round: the Data, Core and
+// Companion Scripts are UNCHANGED from rounds 81/82 - do not
+// touch them. TWO ITEMS. (1) THE ADOPT-CENSUS FIX (the
+// missing-arrival-summary field report): the "CENSUS|A"
+// branch below matched with llGetSubString(str, 0, 5) ==
+// "CENSUS|" - the substring is 6 characters ("CENSUS") and
+// the literal is 7, so the comparison was NEVER true and the
+// automatic summary (region arrival, boot, re-wear, login
+// wake, parcel change) has been silent since round 79
+// shipped it. One character fixes it: end index 6. Manual
+// Summary always worked because it matches plain "CENSUS" -
+// which is exactly how the field misread this bug three
+// rounds in a row. (2) The queued fold-in: the OFF-refusal
+// sentence is now ONE constant (MSG_OFF_STANDBY) instead of
+// three verbatim copies (~128 bytes back).
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Registrar Script (any prim)
 // ------------------------------------------------------------
@@ -178,6 +182,31 @@
 // the Data Script's memory guards, which refuse in tight
 // regions; detection itself works without it.
 //
+// VERSION: round 83 (2026-11-03): TWO ITEMS. (1) THE
+// ADOPT-CENSUS BUG, FOUND BY RACHEL'S FIRST REAL TEST OF IT:
+// "New region detected" printed, a summary never followed,
+// but the menu's Summary button worked. Root cause: the
+// LM_SWEEP_ASK handler's "CENSUS|A" branch tested
+// llGetSubString(str, 0, 5) == "CENSUS|" - llGetSubString is
+// INCLUSIVE of the end index, so (0,5) yields the 6
+// characters "CENSUS" and can never equal the 7-character
+// "CENSUS|". The branch has been dead code since round 79
+// first shipped it; every automatic census path (region
+// adopt, boot, re-wear, the round-80 login wake, the
+// round-81 parcel trigger) silently fell through, while
+// manual Summary (str == "CENSUS") kept working - which is
+// why past field logs read as green: their "arrival
+// summaries" were manual clicks in the same paste, and the
+// teleport-arrival test stayed on the owed battery list
+// through rounds 80, 81 and 82. Fix: end index 6. A new
+// standing audit step joins the battery: every
+// llGetSubString(x, a, b) == "literal" comparison must have
+// len(literal) == b - a + 1 (the substring audit found this
+// the only dead one in all four scripts). (2) THE QUEUED
+// OFF-REFUSAL DEDUP: "The detector is off - click the power
+// button to turn it back on." was stored verbatim at three
+// sites (startScan / startCensusNow / doWatchPlus); it is
+// now the single constant MSG_OFF_STANDBY (~128 bytes back).
 // VERSION: round 82 (2026-11-02): ONE ITEM - THE LIVENESS
 // HEARTBEAT. The timer opens with one llLinksetDataWrite of
 // SMH.rhb (unix seconds) every pass, published for the Core
@@ -349,7 +378,10 @@
 // arrival-lookup handoff are round 79.
 
 string P = "SMH.";        // linkset-data key prefix (shared)
-string BUILD_NUM = "110226082"; // round 82: the build stamp
+// (Round 83: ONE constant instead of the three verbatim
+// copies the standby refusals carried since round 80.)
+string MSG_OFF_STANDBY = "The detector is off - click the power button to turn it back on.";
+string BUILD_NUM = "110326083"; // round 83: the build stamp
                                 // (MMDDYY 110126 + zero-padded round
                                 // 080) - printed on every boot line
                                 // and on Core's Status line (kept
@@ -1127,7 +1159,7 @@ startScan()
     // they are configuration, not detection.)
     if (gHaveState && !gEnabled)
     {
-        llOwnerSay("The detector is off - click the power button to turn it back on.");
+        llOwnerSay(MSG_OFF_STANDBY);
         return;
     }
     if (gScanCount > 0)
@@ -1346,7 +1378,7 @@ startCensusNow()
     // Data Script only sweeps when ON).
     if (gHaveState && !gEnabled)
     {
-        llOwnerSay("The detector is off - click the power button to turn it back on.");
+        llOwnerSay(MSG_OFF_STANDBY);
         return;
     }
     // The menu's Summary button (Core relays "CENSUS"): the
@@ -1385,7 +1417,7 @@ doWatchPlus()
     if (gHaveState && !gEnabled)
     {
         llMessageLinked(LINK_SET, LM_SAY, "NR|ok", "");
-        llOwnerSay("The detector is off - click the power button to turn it back on.");
+        llOwnerSay(MSG_OFF_STANDBY);
         return;
     }
     llMessageLinked(LINK_SET, LM_SAY, "NR|ok", "");
@@ -1704,7 +1736,12 @@ default
             }
             else if (str == "CENSUS")
                 startCensusNow();
-            else if (llGetSubString(str, 0, 5) == "CENSUS|")
+            // (Round 83: end index 6, not 5 - llGetSubString
+            // is inclusive, so (0,5) returned the 6 chars
+            // "CENSUS" and never matched the 7-char literal.
+            // Dead code since round 79; this branch is why
+            // the arrival summary never followed the pre-line.)
+            else if (llGetSubString(str, 0, 6) == "CENSUS|")
             {
                 // "CENSUS|A" - adopt-scope census: count the
                 // agents the Data Script just swept up.
