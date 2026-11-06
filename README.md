@@ -12,7 +12,7 @@ memory only. No external services, no backend, nothing leaves the object.
 |---|---|---|
 | `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power-light vocabulary, failure sweep, persistence, reseat recovery | 82 |
 | `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
-| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat, self-heal reset | 84 |
+| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat, self-heal reset, pick-dialog expiry | 85 |
 | `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog, self-heal reset | 84 |
 | `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | 84 |
 
@@ -25,13 +25,13 @@ Each file keeps its name across releases: a new round lands as a commit
 that UPDATES the existing files, so the commit history shows exactly what
 was added or removed from round to round. The ROUND header at the top of
 each script (and the per-script Build number on the HUD's Status Check)
-identify which round a running copy is. Current release: round 84 (the
-self-heal resets in the Companion and Registrar - field wear ratchets
-free memory down via Mono heap fragmentation, so both scripts now reset
-themselves at a quiescent moment to restore boot memory; the Core and
-Data scripts are unchanged from rounds 82/81. The help notecard was
-refreshed to match: the Status line now reflects the any-stopped-script
-health wording, the self-heal behavior is explained, and the removed
-backup-feature promise is no longer promised).
+identify which round a running copy is. Current release: round 85 (the
+round-84 self-heal quiescence gate on the Registrar demanded an empty
+Watch+ pick dialog, but the keys behind a dismissed pick dialog were
+never cleared, so the reset could never fire - the first field report
+read 4956 free with Watch+ and List All refusing in a busy region. A
+120-second no-response expiry now empties the stale keys and reopens the
+gate; the Core, Data and Companion scripts and the help notecard are
+unchanged from rounds 82/81/84/84).
 
 Private repository - retail product source. Do not redistribute.

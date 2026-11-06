@@ -1,24 +1,27 @@
 
-// ROUND 84 (2026-11-06) - paste the whole script over the old
-// one. The Registrar AND the Companion Script BOTH move this
-// round (the Data and Core Scripts are UNCHANGED from rounds
-// 81/82 - do not touch them); the help notecard is unchanged
-// from round 82. ONE ITEM, THE SAME SELF-HEAL AS THE
-// COMPANION'S: field wear ratchets this script's free memory
-// down too (boot 10610 -> 7966 in three days - the same Mono
-// heap fragmentation, not a leak), and a worn-down Registrar
-// stops being a product long before any collision: the scan
-// and Watch+ guards refuse listings in busy regions (the
-// floor is live population x 102 + 3500), so Summary, List
-// All and Watch+ silently degrade for days. Below 6000 free,
-// at a quiescent moment (no scan wave, no census, no buffered
-// listing lines, no Watch+ pick dialog, no pending dataserver
-// rows), this script nudges Mono's lazy collector, re-reads,
-// and - if the reading is honest - writes a "selfheal" line
-// to the error ring and resets itself. Boot re-asks SYNC (so
-// scope and mirrors are re-acquired within one pass) and
-// restores full memory; the stale-row purge already knows how
-// to drop any rows a session boundary leaves behind.
+// ROUND 85 (2026-11-06) - paste the whole script over the old
+// one. ONLY the Registrar moves this round (the Data, Core and
+// Companion Scripts are UNCHANGED from rounds 81/82/84 - do
+// not touch them); the help notecard is unchanged from round
+// 84. ONE ITEM, A GATE THAT NEVER REOPENED: the r84 self-heal
+// waits for quiescence, and one of its gates is "no Watch+
+// pick dialog" - but gPickKeys, the keys behind that dialog's
+// numbered buttons, was never cleared except by building the
+// NEXT dialog. A dismissed pick dialog (Ignore, or simply
+// never answered) left up to ten keys sitting in the gate
+// forever, so the self-heal could never fire: memory kept
+// ratcheting down, and the first field report landed at 4956
+// free with Watch+ and List All refusing in a busy region
+// ("only manual add by uuid") while the reset sat blocked
+// behind a dialog nobody was looking at. THE FIX: gPickDue -
+// a 120-second no-response expiry set whenever the pick
+// dialog is shown, refreshed by every pick and every Manual
+// Add box, cleared on Back, and expired by the timer, which
+// empties gPickKeys and reopens the quiescence gate within
+// two minutes of the wearer walking away. A numbered click
+// arriving after expiry finds an empty list and no-ops
+// exactly like an empty region; the wearer just presses
+// Watch+ again. The r84 self-heal itself is UNCHANGED.
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Registrar Script (any prim)
 // ------------------------------------------------------------
@@ -402,7 +405,7 @@ string P = "SMH.";        // linkset-data key prefix (shared)
 // (Round 83: ONE constant instead of the three verbatim
 // copies the standby refusals carried since round 80.)
 string MSG_OFF_STANDBY = "The detector is off - click the power button to turn it back on.";
-string BUILD_NUM = "110626084"; // round 84: the build stamp
+string BUILD_NUM = "110626085"; // round 85: the build stamp
                                 // (MMDDYY 110126 + zero-padded round
                                 // 080) - printed on every boot line
                                 // and on Core's Status line (kept
@@ -532,6 +535,17 @@ string gCensusSrc = "A"; // "A" arrival adopt / "M" Summary button
 // flow runs here now) ----------
 list gPickKeys;      // the keys behind the pick dialog's
                      // numbered buttons, in rank order
+integer gPickDue = 0; // round 85: unix time the pick flow
+                     // expires (0 = none pending). Shown with
+                     // the dialog, refreshed by every pick and
+                     // every Manual Add box, cleared on Back,
+                     // expired by the timer - which empties
+                     // gPickKeys with it. Without this the r84
+                     // self-heal's "no pick dialog" gate never
+                     // reopened after a dismissed dialog.
+integer PICK_LINGER = 120; // the expiry window: two minutes
+                     // of no response frees the gate; a wearer
+                     // actively picking refreshes every pick
 integer gChannel = -1; // random per-boot dialog channel (the
                      // round-25 pattern: a listener must
                      // register the exact number, so no
@@ -1507,6 +1521,9 @@ doWatchPlus()
         buttons += [llGetSubString(label, 0, 23)];
     }
     buttons += ["Manual Add", "Back"];
+    // Round 85: the no-response expiry starts with the dialog;
+    // every pick re-shows through here and refreshes it.
+    gPickDue = llGetUnixTime() + PICK_LINGER;
     llDialog(llGetOwner(),
         "Add who to the watch list?\nNearest people first. Click a name to add.",
         buttons, gChannel);
@@ -1691,6 +1708,27 @@ default
                 sendCensus();
         }
 
+        // Round 85: PICK-DIALOG EXPIRY - the missing purge for
+        // the r84 gate below. The gate demands "no Watch+
+        // pick dialog" (gPickKeys empty), but the keys were
+        // only ever cleared by building the NEXT dialog, so
+        // a dismissed pick dialog wedged the gate forever:
+        // the first field report read 4956 free with both
+        // listing guards refusing in a busy region while the
+        // reset sat blocked behind stale keys. PICK_LINGER
+        // seconds of no response (every pick refreshes the
+        // deadline) empties the keys and reopens the gate; a
+        // late numbered click then finds an empty list and
+        // no-ops, exactly like an empty region. The empty-
+        // region dialog never sets gPickKeys, so it needs no
+        // expiry; the Manual Add box restarts the deadline
+        // because it inherits live keys from the dialog.
+        if (gPickDue != 0 && now >= gPickDue)
+        {
+            gPickKeys = [];
+            gPickDue = 0;
+        }
+
         // Round 84: SELF-HEAL RESET - the Companion's answer,
         // applied here. Field wear ratchets this script's free
         // memory down too (boot 10610 -> 7966 in three days),
@@ -1700,7 +1738,10 @@ default
         // buffered listing lines, no Watch+ pick dialog, no
         // pending dataserver rows (their query ids die with
         // the session; the boot purge drops the leftovers
-        // anyway). gcNudge first, then re-read: llGetFree-
+        // anyway). Round 85: the pick-dialog state now EXPIRES
+        // after PICK_LINGER seconds (the block above), so a
+        // dismissed dialog can no longer wedge this reset.
+        // gcNudge first, then re-read: llGetFree-
         // Memory under-reports until an allocation forces a
         // collection, and a pinned reading must not trigger a
         // reset (the r79 lesson both guards learned). logErr,
@@ -1859,6 +1900,11 @@ default
 
         if (msg == "Back")
         {
+            // Round 85: leaving the pick flow drops the keys
+            // and the expiry with them - the quiescence gate
+            // reopens immediately, not after PICK_LINGER.
+            gPickKeys = [];
+            gPickDue = 0;
             llMessageLinked(LINK_SET, LM_MENU_OPEN, "", "");
             return;
         }
@@ -1867,6 +1913,9 @@ default
         {
             // Same flow as the main menu's Manual Add, but on
             // this channel: paste a raw UUID, Submit, done.
+            // Round 85: the text box keeps the ranked keys
+            // alive, so the expiry window restarts here.
+            gPickDue = llGetUnixTime() + PICK_LINGER;
             llTextBox(id, "Paste the avatar key (UUID) you want " +
                 "to watch, then click Submit:", gChannel);
             return;
