@@ -1,24 +1,39 @@
 
-// ROUND 82 (2026-11-02) - paste the whole script over the old
-// one. PAIRED with the round-82 Registrar AND Core Scripts
-// (the Data Script is UNCHANGED from round 81 - do not touch
-// it) and the round-82 help notecard. This round: the CORE
-// WATCHDOG plus our own heartbeat. This script publishes
-// SMH.chb every tick (for Core's failure sweep), and it
-// watches Core's SMH.corehb: if Core goes silent past the
-// 2-minute bar, this script blinks the power light RED and
-// says so in chat - a dead Core cannot report itself, and
-// this script is the only other one that can write the
-// light. When Core runs again it re-writes its own color on
-// every pass, so no hand-back protocol is needed. Shared-
-// freeze immunity: if OUR tick was late too, the whole
-// linkset froze together (logout, a no-scripts parcel) - the
-// evaluation is skipped and re-graced, so a relog never
-// false-alarms.
+// ROUND 84 (2026-11-06) - paste the whole script over the old
+// one. The Companion AND the Registrar Script BOTH move this
+// round (the Data and Core Scripts are UNCHANGED from rounds
+// 81/82 - do not touch them); the help notecard is unchanged
+// from round 82. ONE ITEM, TRIGGERED BY THE FIELD ALARM:
+// three days of normal wear took this script from 6954 free
+// at boot to 376 free - the round-80 club soak read the same
+// ratchet (1170 free), and the low-water line fired exactly
+// as designed. The cause is Mono heap fragmentation from
+// ordinary string churn, NOT a data leak (the only list is
+// the bounded watch mirror; the rings and encounters live in
+// linkset data). No code reclaims fragmentation; only a reset
+// does, and all durable state lives in linkset data - so this
+// script now SELF-HEALS: below 2000 free, at a quiescent
+// moment (no typed-input mode, no pending Watch+ pick, no
+// welcome flow or scheduled one, no live Core watchdog), it
+// writes a "selfheal" forensics line to the error ring and
+// resets itself. Boot restores full memory; Core's 120 s
+// failure bar never sees the gap (the first tick republishes
+// SMH.chb seconds later).
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Companion Script (any prim)
 // ------------------------------------------------------------
 // VERSION HISTORY (newest first):
+//   round 84: SELF-HEAL RESET (the low-water alarm's answer).
+//     Field: boot 6954 -> 376 free in three days of normal
+//     wear; the r80 club soak read the same ratchet. Frag-
+//     mentation, not a leak. Below 2000 free at a QUIESCENT
+//     moment - gates: gMode == 0, gPickDue == 0, no welcome
+//     flow active or scheduled (!gWelcome, gSetupDue == 0),
+//     no live watchdog (!gCoreWatch) - the timer writes
+//     "selfheal: reset at N free" to the error ring and calls
+//     llResetScript. state_entry re-reads everything from
+//     linkset data; the boot "Companion ready" line is the
+//     visible trace.
 //   round 82: THE CORE WATCHDOG + HEARTBEAT (field-designed
 //     with Rachel as part of the light vocabulary). (1) The
 //     tick publishes SMH.chb every pass - Core's new failure
@@ -443,7 +458,7 @@ string P = "SMH.";        // linkset-data key prefix (shared with
                          // the one-time setup flag below, the
                          // debug rings it prints, and the
                          // round-80 error-ring self-report.
-string BUILD_NUM = "110226082"; // round 82: the build stamp
+string BUILD_NUM = "110626084"; // round 84: the build stamp
                                 // (MMDDYY 110126 + zero-padded round
                                 // 080) - printed on every boot line
                                 // and on Core's Status line (kept
@@ -1537,6 +1552,25 @@ default
             if (i >= ERR_LOG_SLOTS)
                 i = 0;
             llLinksetDataWrite(P + "errNext", (string)i);
+        }
+        // Round 84: SELF-HEAL RESET - the low-water line's
+        // answer. Boot 6954 fell to 376 free in three days of
+        // normal wear (the r80 club soak read the same
+        // ratchet): Mono heap fragmentation from ordinary
+        // string churn, not a data leak, and only a reset
+        // reclaims it. Durable state is all in linkset data,
+        // so at a QUIESCENT moment - no typed-input mode, no
+        // pending Watch+ pick, no welcome flow or scheduled
+        // one, and no live Core watchdog (a dead Core needs
+        // the watchdog ALIVE, not a reset) - write the
+        // forensics line and reset. Boot restores full memory;
+        // Core's 120 s failure bar never sees the gap (the
+        // first tick republishes "chb" seconds later).
+        if (cf < 2000 && gMode == 0 && gPickDue == 0 &&
+            !gWelcome && gSetupDue == 0 && !gCoreWatch)
+        {
+            watchRing("selfheal: reset at " + (string)cf + " free");
+            llResetScript();
         }
         // Expire typed-input modes.
         if (gMode != 0 && llGetUnixTime() > gModeExpiry)

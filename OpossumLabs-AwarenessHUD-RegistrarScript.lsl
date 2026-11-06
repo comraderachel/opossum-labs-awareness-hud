@@ -1,20 +1,24 @@
 
-// ROUND 83 (2026-11-03) - paste the whole script over the old
-// one. Registrar ONLY this round: the Data, Core and
-// Companion Scripts are UNCHANGED from rounds 81/82 - do not
-// touch them. TWO ITEMS. (1) THE ADOPT-CENSUS FIX (the
-// missing-arrival-summary field report): the "CENSUS|A"
-// branch below matched with llGetSubString(str, 0, 5) ==
-// "CENSUS|" - the substring is 6 characters ("CENSUS") and
-// the literal is 7, so the comparison was NEVER true and the
-// automatic summary (region arrival, boot, re-wear, login
-// wake, parcel change) has been silent since round 79
-// shipped it. One character fixes it: end index 6. Manual
-// Summary always worked because it matches plain "CENSUS" -
-// which is exactly how the field misread this bug three
-// rounds in a row. (2) The queued fold-in: the OFF-refusal
-// sentence is now ONE constant (MSG_OFF_STANDBY) instead of
-// three verbatim copies (~128 bytes back).
+// ROUND 84 (2026-11-06) - paste the whole script over the old
+// one. The Registrar AND the Companion Script BOTH move this
+// round (the Data and Core Scripts are UNCHANGED from rounds
+// 81/82 - do not touch them); the help notecard is unchanged
+// from round 82. ONE ITEM, THE SAME SELF-HEAL AS THE
+// COMPANION'S: field wear ratchets this script's free memory
+// down too (boot 10610 -> 7966 in three days - the same Mono
+// heap fragmentation, not a leak), and a worn-down Registrar
+// stops being a product long before any collision: the scan
+// and Watch+ guards refuse listings in busy regions (the
+// floor is live population x 102 + 3500), so Summary, List
+// All and Watch+ silently degrade for days. Below 6000 free,
+// at a quiescent moment (no scan wave, no census, no buffered
+// listing lines, no Watch+ pick dialog, no pending dataserver
+// rows), this script nudges Mono's lazy collector, re-reads,
+// and - if the reading is honest - writes a "selfheal" line
+// to the error ring and resets itself. Boot re-asks SYNC (so
+// scope and mirrors are re-acquired within one pass) and
+// restores full memory; the stale-row purge already knows how
+// to drop any rows a session boundary leaves behind.
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Registrar Script (any prim)
 // ------------------------------------------------------------
@@ -182,6 +186,23 @@
 // the Data Script's memory guards, which refuse in tight
 // regions; detection itself works without it.
 //
+// VERSION: round 84 (2026-11-06): ONE ITEM - SELF-HEAL RESET,
+// the Companion's answer applied here. Field data: boot
+// 10610 -> 7966 free in three days of normal wear - the same
+// Mono heap fragmentation ratchet, not a leak (the rings and
+// encounters live in linkset data; every list here is bounded
+// by a cap or a purge). A worn-down Registrar refuses
+// listings in busy regions long before any collision (the
+// guard floor is live population x 102 + 3500), so the fix is
+// to RESTORE boot memory on schedule: below 6000 free, at a
+// quiescent moment (gScanCount == 0, gCensusLeft == 0,
+// gScanLines == 0, no Watch+ pick keys, no pending dataserver
+// rows), gcNudge() then an honest re-read, then logErr
+// "selfheal: reset at N free" and llResetScript. logErr, not
+// dbgLog: the line must land in the ring with Debug Log off.
+// state_entry re-asks SYNC, so scope and mirrors return
+// within one pass; Core's 120 s failure bar never sees the
+// gap (this timer republishes SMH.rhb every 2 s).
 // VERSION: round 83 (2026-11-03): TWO ITEMS. (1) THE
 // ADOPT-CENSUS BUG, FOUND BY RACHEL'S FIRST REAL TEST OF IT:
 // "New region detected" printed, a summary never followed,
@@ -381,7 +402,7 @@ string P = "SMH.";        // linkset-data key prefix (shared)
 // (Round 83: ONE constant instead of the three verbatim
 // copies the standby refusals carried since round 80.)
 string MSG_OFF_STANDBY = "The detector is off - click the power button to turn it back on.";
-string BUILD_NUM = "110326083"; // round 83: the build stamp
+string BUILD_NUM = "110626084"; // round 84: the build stamp
                                 // (MMDDYY 110126 + zero-padded round
                                 // 080) - printed on every boot line
                                 // and on Core's Status line (kept
@@ -1668,6 +1689,36 @@ default
             }
             else
                 sendCensus();
+        }
+
+        // Round 84: SELF-HEAL RESET - the Companion's answer,
+        // applied here. Field wear ratchets this script's free
+        // memory down too (boot 10610 -> 7966 in three days),
+        // and the guards refuse listings in busy regions long
+        // before any collision - restoring boot memory keeps
+        // them honest. Quiescent = no scan wave, no census, no
+        // buffered listing lines, no Watch+ pick dialog, no
+        // pending dataserver rows (their query ids die with
+        // the session; the boot purge drops the leftovers
+        // anyway). gcNudge first, then re-read: llGetFree-
+        // Memory under-reports until an allocation forces a
+        // collection, and a pinned reading must not trigger a
+        // reset (the r79 lesson both guards learned). logErr,
+        // not dbgLog - this line must land in the ring with
+        // Debug Log off. state_entry re-asks SYNC, so scope
+        // and mirrors are re-acquired within one pass.
+        if (llGetFreeMemory() < 6000 && gScanCount == 0 &&
+            gCensusLeft == 0 && gScanLines == 0 &&
+            llGetListLength(gPickKeys) == 0 &&
+            llGetListLength(gPending) == 0)
+        {
+            gcNudge();
+            if (llGetFreeMemory() < 6000)
+            {
+                logErr("selfheal: reset at " +
+                    (string)llGetFreeMemory() + " free");
+                llResetScript();
+            }
         }
     }
 

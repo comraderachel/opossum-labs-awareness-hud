@@ -12,8 +12,8 @@ memory only. No external services, no backend, nothing leaves the object.
 |---|---|---|
 | `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power-light vocabulary, failure sweep, persistence, reseat recovery | 82 |
 | `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
-| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat | 83 |
-| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog | 82 |
+| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat, self-heal reset | 84 |
+| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog, self-heal reset | 84 |
 | `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | 82 |
 
 The scripts are paired as a set: update all changed scripts together,
@@ -25,7 +25,10 @@ Each file keeps its name across releases: a new round lands as a commit
 that UPDATES the existing files, so the commit history shows exactly what
 was added or removed from round to round. The ROUND header at the top of
 each script (and the per-script Build number on the HUD's Status Check)
-identify which round a running copy is. Current release: round 83 (the
-Registrar's adopt-census fix; the Data script is unchanged since round 81).
+identify which round a running copy is. Current release: round 84 (the
+self-heal resets in the Companion and Registrar - field wear ratchets
+free memory down via Mono heap fragmentation, so both scripts now reset
+themselves at a quiescent moment to restore boot memory; the Core and
+Data scripts are unchanged from rounds 82/81).
 
 Private repository - retail product source. Do not redistribute.
