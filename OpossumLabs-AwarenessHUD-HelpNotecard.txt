@@ -132,8 +132,9 @@ Watch List: show your watch list (each entry shows the avatar's
 Encounters: shows where and when you have run into people on
   your watch list, plus automated agents (see section 6).
 Status: quick summary of on/off, Area (where the HUD is
-  watching), watch count, and whether the Data Script is
-  still running. The line ends with the build number
+  watching), watch count, and a warning naming any script
+  that has stopped (all quiet when every script is
+  healthy). The line ends with the build number
   (e.g. "Build:110126080") - quote it when reporting an
   issue. (Memory is NOT here
   anymore - use Settings > Debug > Status Check for that.)
@@ -165,8 +166,8 @@ Area: where and how wide the HUD watches, in two steps.
   (see section 9).
 (Moving your watch list to another copy of this HUD - for
   example a replacement unit after an update - is not built
-  into this version. A backup and transfer feature is planned
-  for a future update.)
+  into this version: re-add your entries on the new copy, as
+  section 10 explains.)
 Encounters: shows how long the encounter history is kept -
   30 days, fixed. Older entries are removed automatically
   (see section 6).
@@ -252,8 +253,7 @@ Tips:
   button that matches the name to remove that entry (the
   "More" button flips to the next page). No typing needed.
 - Moving your list to another copy of the HUD? That is not
-  built into this version - a backup feature is planned for a
-  future update. For now, re-add your entries with Watch+ or
+  built into this version. Re-add your entries with Watch+ or
   Manual Add on the new copy.
 - Watched people are announced when they enter or leave the
   region you are in; ALWAYS region-wide, no matter which Area
@@ -280,7 +280,7 @@ somewhere they already are. Click Encounters in the menu to see
 it. Each entry shows the date and time (SLT - Second Life time),
 the person, the region, and the parcel they were on:
 
-> 2026-10-28 19:57 SLT - Rachel Frost - Lusk (Boardwalk)
+> 2026-10-28 19:57 SLT - Alexis Crystal - Lusk (Boardwalk)
 
 Automated agents get a tag after their name:
 
@@ -472,10 +472,15 @@ Your settings and watch list are saved inside the HUD object
 itself and survive script resets. "Wipe" in the menu erases
 everything and restores the defaults.
 
+The HUD also looks after its own memory: every so often it
+restarts one of its scripts by itself to keep memory
+healthy. You may briefly see that script's ready line print
+again in chat - nothing is lost, no setting changes, and no
+action is needed.
+
 To move your watch list to another copy of the HUD (for
 example a replacement unit after an update), re-add your
-entries with Watch+ or Manual Add on the new copy. A built-in
-backup and transfer feature is planned for a future update.
+entries with Watch+ or Manual Add on the new copy.
 
 NOTE: If your viewer crashes, the very last changes may not
 have been saved yet.
