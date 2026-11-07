@@ -13,7 +13,7 @@ memory only. No external services, no backend, nothing leaves the object.
 | `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power-light vocabulary, failure sweep, persistence, reseat recovery | 82 |
 | `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
 | `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat, self-heal reset, pick-dialog expiry | 85 |
-| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog, self-heal reset | 84 |
+| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog, self-heal reset | 86 |
 | `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | 84 |
 
 The scripts are paired as a set: update all changed scripts together,
@@ -25,13 +25,10 @@ Each file keeps its name across releases: a new round lands as a commit
 that UPDATES the existing files, so the commit history shows exactly what
 was added or removed from round to round. The ROUND header at the top of
 each script (and the per-script Build number on the HUD's Status Check)
-identify which round a running copy is. Current release: round 85 (the
-round-84 self-heal quiescence gate on the Registrar demanded an empty
-Watch+ pick dialog, but the keys behind a dismissed pick dialog were
-never cleared, so the reset could never fire - the first field report
-read 4956 free with Watch+ and List All refusing in a busy region. A
-120-second no-response expiry now empties the stale keys and reopens the
-gate; the Core, Data and Companion scripts and the help notecard are
-unchanged from rounds 82/81/84/84).
+identify which round a running copy is. Current release: round 86 (the
+REGION SLOWDOWN line lost its speculation clause - it now states the sim
+speed and the recovery promise, nothing else; the Data, Core and
+Registrar scripts and the help notecard are unchanged from rounds
+81/82/85/84).
 
 Private repository - retail product source. Do not redistribute.

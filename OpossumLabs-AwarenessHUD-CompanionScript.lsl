@@ -1,28 +1,28 @@
 
-// ROUND 84 (2026-11-06) - paste the whole script over the old
-// one. The Companion AND the Registrar Script BOTH move this
-// round (the Data and Core Scripts are UNCHANGED from rounds
-// 81/82 - do not touch them); the help notecard is unchanged
-// from round 82. ONE ITEM, TRIGGERED BY THE FIELD ALARM:
-// three days of normal wear took this script from 6954 free
-// at boot to 376 free - the round-80 club soak read the same
-// ratchet (1170 free), and the low-water line fired exactly
-// as designed. The cause is Mono heap fragmentation from
-// ordinary string churn, NOT a data leak (the only list is
-// the bounded watch mirror; the rings and encounters live in
-// linkset data). No code reclaims fragmentation; only a reset
-// does, and all durable state lives in linkset data - so this
-// script now SELF-HEALS: below 2000 free, at a quiescent
-// moment (no typed-input mode, no pending Watch+ pick, no
-// welcome flow or scheduled one, no live Core watchdog), it
-// writes a "selfheal" forensics line to the error ring and
-// resets itself. Boot restores full memory; Core's 120 s
-// failure bar never sees the gap (the first tick republishes
-// SMH.chb seconds later).
+// ROUND 86 (2026-11-06) - paste the whole script over the old
+// one. ONLY the Companion moves this round (the Data, Core and
+// Registrar Scripts are UNCHANGED from rounds 81/82/85 - do
+// not touch them); the help notecard is unchanged from round
+// 84. ONE ITEM, A WORDING TRIM Rachel asked for: the REGION
+// SLOWDOWN line's middle clause ("something heavy is running
+// in this region (script or particle spam, physics, or sim
+// trouble)") read as speculation the HUD cannot verify - the
+// wearer knows what a slow sim means. The line now states
+// the fact and the promise: "REGION SLOWDOWN: the sim is
+// running at N% of normal speed. You will hear when it
+// recovers." The recovery line is unchanged, and the
+// notecard's sample already showed the short form, so no
+// notecard change rides this round.
 // ============================================================
 // OPOSSUM LABS AWARENESS HUD - Companion Script (any prim)
 // ------------------------------------------------------------
 // VERSION HISTORY (newest first):
+//   round 86: WORDING TRIM on the REGION SLOWDOWN line, at
+//     Rachel's request: the speculation clause ("something
+//     heavy is running in this region (script or particle
+//     spam, physics, or sim trouble)") is cut - the fact and
+//     the promise remain. The recovery line is unchanged; the
+//     notecard already showed the short form.
 //   round 84: SELF-HEAL RESET (the low-water alarm's answer).
 //     Field: boot 6954 -> 376 free in three days of normal
 //     wear; the r80 club soak read the same ratchet. Frag-
@@ -458,7 +458,7 @@ string P = "SMH.";        // linkset-data key prefix (shared with
                          // the one-time setup flag below, the
                          // debug rings it prints, and the
                          // round-80 error-ring self-report.
-string BUILD_NUM = "110626084"; // round 84: the build stamp
+string BUILD_NUM = "110626086"; // round 86: the build stamp
                                 // (MMDDYY 110126 + zero-padded round
                                 // 080) - printed on every boot line
                                 // and on Core's Status line (kept
@@ -977,10 +977,13 @@ handleSay(string str, key id)
         // recovers. Field 3 = sim speed as a percent of normal
         // (100 = full speed).
         if (llList2String(f, 1) == "low")
+            // Round 86: the speculation clause is cut (the
+            // HUD cannot verify WHAT is slow, and the wearer
+            // does not need the lecture) - the fact and the
+            // promise remain.
             llOwnerSay("REGION SLOWDOWN: the sim is running at " +
-                llList2String(f, 2) + "% of normal speed - something heavy " +
-                "is running in this region (script or particle spam, " +
-                "physics, or sim trouble). You will hear when it recovers.");
+                llList2String(f, 2) + "% of normal speed. " +
+                "You will hear when it recovers.");
         else
             llOwnerSay("Region speed recovered: " + llList2String(f, 2) +
                 "% of normal.");
