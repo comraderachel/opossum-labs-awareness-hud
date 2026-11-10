@@ -6,6 +6,9 @@ watches for scripted agents region-wide, and alerts the moment a watched
 avatar appears. Everything runs inside the HUD - linkset data and script
 memory only. No external services, no backend, nothing leaves the object.
 
+See ARCHITECTURE.md for per-script state and data-flow diagrams (Mermaid
+renders directly on GitHub).
+
 ## Files
 
 | File | Role | Current version |
@@ -15,6 +18,7 @@ memory only. No external services, no backend, nothing leaves the object.
 | `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat, self-heal reset, pick-dialog expiry | 85 |
 | `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog, self-heal reset | 86 |
 | `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | 84 |
+| `ARCHITECTURE.md` | Script states and data-flow diagrams | - |
 
 The scripts are paired as a set: update all changed scripts together,
 following the ROUND header at the top of each file.
