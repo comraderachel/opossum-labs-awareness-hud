@@ -42,7 +42,7 @@ integer SCOPE_RADIUS = 1;
 integer SCOPE_PARCEL = 2;
 
 string P = "SMH.";
-string BUILD_NUM = "110226082";
+string BUILD_NUM = "111126087";
 
 integer CDBG_SLOTS = 8;
 
@@ -122,7 +122,11 @@ integer validUUID(string s)
         return FALSE;
     if (llGetSubString(s, 23, 23) != "-")
         return FALSE;
-    return TRUE;
+// key truthiness is TRUE only for a valid, non-null key, so a
+// dash-shaped but non-hex string (or the null key) fails here
+    if ((key)s)
+        return TRUE;
+    return FALSE;
 }
 
 string safeName(key id)
@@ -163,7 +167,7 @@ loadSettings()
     {
 
         if (storedOwner != "")
-            llOwnerSay("New owner detected - watch list cleared, preferences kept.");
+            llOwnerSay("New owner detected - personal data cleared, settings reset to defaults.");
         llLinksetDataWrite(P + "watch", "");
 
         integer eo;

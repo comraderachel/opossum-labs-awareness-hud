@@ -2,7 +2,7 @@
 
 Four scripts, one logical object. Each script lives in the LSL `default` state only, so the "states" below are conceptual: each script is a set of event handlers (timer, listen, touch, link_message, dataserver) sharing globals, plus a shared memory bus. Everything durable lives in linkset data under the `SMH.*` prefix, so any script can reset without losing settings, the watch list, logs, or encounters.
 
-Current rounds: Core 82 (build 110226082), Data 81 (110226081), Registrar 85 (110626085), Companion 86 (110626086).
+Current rounds: Core 87 (build 111126087), Data 81 (110226081), Registrar 85 (110626085), Companion 86 (110626086).
 
 ## The Big Picture
 

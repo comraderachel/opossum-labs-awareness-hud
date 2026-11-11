@@ -17,7 +17,7 @@ memory only. No external services, no backend, nothing leaves the object.
 
 | File | Role | Build |
 |---|---|---|
-| `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power light, persistence, failure sweep | 110226082 |
+| `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power light, persistence, failure sweep | 111126087 |
 | `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine: arrivals, sweeps, watch alerts, region slowdown watch | 110226081 |
 | `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Arrival lookups, List All, census, Watch+ picker, self-heal | 110626085 |
 | `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, all chat output, encounters, Core watchdog, self-heal | 110626086 |
@@ -126,6 +126,9 @@ Invariants to respect when editing:
   progress; the HUD re-adopts the new region silently on its first pass.
 - Sim freezes are Second Life scheduling, not HUD faults: the HUD waits
   them out and catches up by itself, and Trace shows them.
+- Second Life itself reports at most 100 avatars per pass to scripts,
+  so in extreme crowds (100+) the HUD cannot see or announce everyone,
+  watched people included.
 
 ## Compatibility
 
