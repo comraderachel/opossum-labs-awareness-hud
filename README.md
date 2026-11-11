@@ -1,38 +1,118 @@
 # Opossum Labs Awareness HUD
 
-A Second Life LSL heads-up display that keeps an eye on who is around you:
-it announces arrivals with account age, payment status and viewer language,
+A Second Life heads-up display that keeps an eye on who is around you: it
+announces arrivals with account age, payment status and viewer language,
 watches for scripted agents region-wide, and alerts the moment a watched
 avatar appears. Everything runs inside the HUD - linkset data and script
 memory only. No external services, no backend, nothing leaves the object.
 
-See ARCHITECTURE.md for per-script state and data-flow diagrams (Mermaid
-renders directly on GitHub).
+- Arrival announcements with age, payment status, language and flags
+- Watch list with region-wide enter/leave alerts and a sound ping
+- Scripted-agent detection and encounter logging
+- List All, nearest-first Watch+ picker, region census summary
+- Parcel / radius / region scope, power button, in-world help notecard
+- Self-monitoring: heartbeats, failure sweep, self-healing memory resets
 
-## Files
+## The four scripts
 
-| File | Role | Current version |
+| File | Role | Build |
 |---|---|---|
-| `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power-light vocabulary, failure sweep, persistence, reseat recovery | 82 |
-| `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine - arrivals, sweeps, watch alerts, arrival pre-line, parcel-scope arrival summary | 81 |
-| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Census, List All, Watch+ ranking, memory-guarded fetching, liveness heartbeat, self-heal reset, pick-dialog expiry | 85 |
-| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, owner chat output, liveness heartbeat, Core watchdog, self-heal reset | 86 |
-| `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | 84 |
-| `ARCHITECTURE.md` | Script states and data-flow diagrams | - |
+| `OpossumLabs-AwarenessHUD-CoreScript.lsl` | Settings, watch list, panel buttons, power light, persistence, failure sweep | 110226082 |
+| `OpossumLabs-AwarenessHUD-DataScript.lsl` | Detection engine: arrivals, sweeps, watch alerts, region slowdown watch | 110226081 |
+| `OpossumLabs-AwarenessHUD-RegistrarScript.lsl` | Arrival lookups, List All, census, Watch+ picker, self-heal | 110626085 |
+| `OpossumLabs-AwarenessHUD-CompanionScript.lsl` | Menus, dialogs, all chat output, encounters, Core watchdog, self-heal | 110626086 |
+| `OpossumLabs-AwarenessHUD-HelpNotecard.txt` | In-world help notecard | v1.0 |
 
-The scripts are paired as a set: update all changed scripts together,
-following the ROUND header at the top of each file.
+ARCHITECTURE.md has per-script state and data-flow diagrams (Mermaid
+renders on GitHub).
 
-## Tracking changes
+## Quick start
 
-Each file keeps its name across releases: a new round lands as a commit
-that UPDATES the existing files, so the commit history shows exactly what
-was added or removed from round to round. The ROUND header at the top of
-each script (and the per-script Build number on the HUD's Status Check)
-identify which round a running copy is. Current release: round 86 (the
-REGION SLOWDOWN line lost its speculation clause - it now states the sim
-speed and the recovery promise, nothing else; the Data, Core and
-Registrar scripts and the help notecard are unchanged from rounds
-81/82/85/84).
+1. Rez or wear the HUD object. The scripts may live in any prim of the
+   linkset; the Core rebuilds its default panel placement on boot.
+2. Create a new script in the object, paste one file into it, save, and
+   repeat for all four scripts. The Status Check menu option prints each
+   script's build number to confirm what is running.
+3. Create a notecard, paste the help notecard text, and name it exactly
+   `Awareness Hud Help` (the Core looks for this name).
+4. Wear the HUD. The first-time welcome flow walks you through the rest.
 
-Private repository - retail product source. Do not redistribute.
+Comments in these files are deliberately short. The why behind each
+design lives in README.md and ARCHITECTURE.md, not in the code.
+
+## Design guide: making your own HUD from this code
+
+If you fork this, keep the architecture unless you have a reason not to.
+It exists because of how Second Life's scripting runtime works.
+
+One job, one script, one heap. Every LSL script gets its own ~64 KB Mono
+heap, and a HUD that mixes detection, listings and menus in one script
+will hit Stack-Heap Collisions under load. The split here is by
+volatility: the detection loop (Data Script) must never share a heap
+with burst-heavy listing work (Registrar), and neither may share one
+with the UI (Companion). A crash in one script cannot take down the
+core function.
+
+All durable state lives in linkset data. The `SMH.*` keys hold every
+setting, the watch list, the logs and the encounters, so any script can
+be reset at any time without losing anything. This is what makes the
+self-heal resets safe: a worn-down script resets itself at a quiet
+moment and reads its state back from the bus on boot.
+
+One script owns the user's eyes. The Companion prints every line and
+builds every dialog. Workers send compact pipe-coded messages (see the
+channel table in ARCHITECTURE.md); the full human-readable text exists
+in exactly one heap. Full text strings are the most expensive thing in
+LSL - never duplicate them across scripts.
+
+Mirrors, not requests. Core broadcasts the settings and the watch list
+as mirrors (LM_UI_STATE, LM_WATCH_LIST). Workers ask for a SYNC push at
+boot instead of querying Core synchronously, so a restarting script is
+fully functional within one timer pass.
+
+Degrade honestly, never crash. Every memory-heavy path has a guard
+priced against live population (a listing costs roughly 102 bytes per
+avatar in the region), a fit-cap that trims counts instead of failing,
+and an honest refusal line when the work genuinely does not fit.
+`llGetFreeMemory()` under-reports until Mono's lazy collector runs, so
+every guard nudges the collector before reading. Copy this pattern if
+you copy nothing else.
+
+Liveness is a design, not an afterthought. Every script publishes a
+heartbeat to linkset data every timer pass. Core sweeps the three
+workers; the Companion watches Core (a dead Core cannot report itself);
+whoever notices, the power light tells the wearer. The Registrar and
+Companion reset themselves when free memory drops below their floors and
+all work is quiet - the quiescence gates matter, a reset mid-listing
+would be worse than low memory.
+
+Invariants to respect when editing:
+
+- LSL compiles top-down: declare a global before any use of it.
+- The watch mirror holds CSV strings, not keys - cast before matching.
+- Fetches run in capped waves; never hold a whole region in one list.
+- Flush listing output at 10 lines or 900 bytes (llOwnerSay caps at 1024).
+- The four scripts are pasted as a matched set; keep build stamps in sync
+  and read them back from Status Check after pasting.
+
+## Documentation
+
+- ARCHITECTURE.md - every script's states, flows and the message bus,
+  with diagrams.
+- The help notecard - end-user documentation, readable outside Second
+  Life too.
+- Each script header - a short license notice and what the script owns.
+
+## Compatibility
+
+Second Life regions (LSL, Mono runtime). No external HTTP services, no
+database, no listener ports. Works as an attachment in any linkset.
+
+## License
+
+GPL-3.0-or-later. See LICENSE for the full text. The scripts carry the
+standard per-file notice in their headers. If you redistribute the HUD
+in-world, keep the license headers intact and point recipients at this
+repository for the source - the help notecard already does.
+
+(c) 2026 Opossum Labs - rachel.possum in-world.

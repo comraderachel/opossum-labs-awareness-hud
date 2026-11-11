@@ -576,4 +576,7 @@ Enjoy your travels!
 
 Made by Opossum Labs
 
+This HUD is open source under the GPL-3.0 license. Source
+code: github.com/comraderachel/opossum-labs-awareness-hud
+
 ==========================================================================
