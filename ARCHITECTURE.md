@@ -13,7 +13,7 @@ flowchart TB
   wearer["Wearer: touch, menus, typed text, chat"]
   region["Region: agent list, dilation"]
   ds["Dataserver: born dates, payment status"]
-  core["Core r82: settings, watch list, persistence, power light, failure sweep"]
+  core["Core r87: settings, watch list, persistence, power light, failure sweep"]
   data["Data r81: detection engine, sweeps, watch alerts"]
   reg["Registrar r85: arrival lookups, List All, census, Watch+"]
   comp["Companion r86: menus, dialogs, every chat line, encounters"]
@@ -61,7 +61,7 @@ The two safety loops worth calling out:
 - Core sweeps the three worker heartbeats (`hb`, `rhb`, `chb`); a stale one fails the power light to a red blink and writes a failure ring entry.
 - The Companion watches Core the same way (`corehb`, stale after 120 seconds) because a dead Core cannot report itself. Whoever notices, the wearer sees the light.
 
-## Core Script (r82) - settings, watch list, power light
+## Core Script (r87) - settings, watch list, power light
 
 The Core owns every preference and the watch list, persists all of it to linkset data, and relays menu commands to the right worker. It never talks to the dataserver.
 
