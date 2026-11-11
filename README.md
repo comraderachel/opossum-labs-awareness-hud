@@ -102,8 +102,8 @@ Invariants to respect when editing:
 
 - ARCHITECTURE.md - every script's states, flows and the message bus,
   with diagrams.
-- The help notecard - end-user documentation, readable outside Second
-  Life too.
+- The help notecard - end-user documentation (CC BY-SA 4.0), readable
+  outside Second Life too.
 - Each script header - a short license notice, what the script owns,
   and the repository address.
 
@@ -132,11 +132,25 @@ Invariants to respect when editing:
 Second Life regions (LSL, Mono runtime). No external HTTP services, no
 database, no listener ports. Works as an attachment in any linkset.
 
-## License
+## License and branding
 
-GPL-3.0-or-later. See LICENSE for the full text. The scripts carry the
-standard per-file notice in their headers. If you redistribute the HUD
-in-world, keep the license headers intact and point recipients at this
-repository for the source - the help notecard already does.
+The code - the four .lsl scripts - is GPL-3.0-or-later. See LICENSE for
+the full text. The scripts carry the standard per-file notice in their
+headers. If you redistribute the HUD in-world, keep the license headers
+intact and point recipients at this repository for the source - the
+help notecard already does.
+
+The help notecard text is documentation, not code, and is separately
+licensed under Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA
+4.0). You may share and adapt it, including commercially, as long as
+you credit Opossum Labs and share adaptations under the same license.
+
+The name "Opossum Labs" and this project's branding are not part of
+either license and are not licensed for use in derived works. If you
+build your own product from this code, give it your own name and your
+own branding: do not sell or present it as an Opossum Labs product,
+and do not present yourself as an authorized representative of Opossum
+Labs. Stating truthfully that your work is based on or derived from
+this project is fine and needs no permission.
 
 (c) 2026 Opossum Labs - rachel.possum in-world.

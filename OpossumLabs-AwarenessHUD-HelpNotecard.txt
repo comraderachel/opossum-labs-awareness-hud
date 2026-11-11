@@ -580,6 +580,10 @@ Made by Opossum Labs
 This HUD is open source under the GPL-3.0 license. Source
 code: github.com/comraderachel/opossum-labs-awareness-hud
 
+This help text is not code and carries its own license:
+Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0) -
+share and adapt it freely, with credit to Opossum Labs.
+
 Updates: you can get the latest version of this HUD free via
 the redeliver function on the SL Marketplace -
 https://marketplace.secondlife.com/stores/148048
