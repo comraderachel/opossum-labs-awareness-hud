@@ -45,6 +45,90 @@ stand on their own.
 
 ## Design guide: making your own HUD from this code
 
+The scripts find their buttons by prim name, so the look of the HUD is
+entirely yours. This section is the physical contract: what the object
+must contain, a step-by-step build with the Second Life edit tool, and
+what you can change freely.
+
+### What the HUD expects from the object
+
+A linkset with one prim acting as the panel body. Make it the root
+prim and name it `Avatar Awareness HUD`: the root prim's name becomes
+the object's name when you take it into inventory.
+
+Four button prims linked into that linkset, each named exactly
+(case-sensitive): `Power Button`, `Help Button`, `Sound Button`,
+`Menu Button`. Give each name to exactly one prim. The Core looks the
+buttons up by name at boot, so if you rename a prim later, reset the
+Core Script to make it pick the new name up.
+
+Missing buttons degrade, they do not break:
+
+- With no `Power Button` prim, the root prim acts as the power button.
+- A missing Help or Sound prim just leaves that one click inert; both
+  features stay reachable from the menu.
+- With no `Menu Button` prim there is no way to open the dialogs at
+  all, so every build needs one.
+- Prims with other names never respond to clicks. Add as many
+  decorative prims as you like, and never reuse the four button names
+  on them.
+
+The object's contents (the scripts themselves may sit in any prim of
+the linkset; they talk over link messages):
+
+- The four scripts, each pasted into its own new script and saved.
+  Current viewers compile LSL as Mono by default, which is what these
+  scripts require.
+- A notecard named exactly `Awareness Hud Help`: the Help button's
+  target. If it is missing, the HUD says so in chat instead of
+  breaking.
+- Optional: a sound named `notification` for the watch ping. Without it
+  the HUD works, just silently.
+
+Design around one scripted behavior: the Core recolors the Power
+Button and the Sound Button itself - all sides, green for healthy or
+enabled, red for off or a failure, amber when memory caps narrow, and
+blinking while busy or failing. Give those two prims plain faces you
+are happy to see tinted. Textures, labels, shapes, sizes, positions
+and prim count are all yours.
+
+### Building the HUD with the edit tool
+
+1. Rez a prim and shape it as your panel. Name it
+   `Avatar Awareness HUD`. This will be the root.
+2. Rez four button prims. Name them exactly `Power Button`,
+   `Help Button`, `Sound Button` and `Menu Button`.
+3. Arrange them however you like. A simple starting point is a 2x2
+   grid on the panel face: each button's center sits a quarter of the
+   panel's size in from the panel's edge on each axis. Nothing about
+   position or layout is scripted.
+4. Select the four buttons first and the panel last, then press
+   Ctrl+L to link. The last prim selected is the root, so the panel
+   must be selected last.
+5. Open the edit window's Contents tab and add the four scripts
+   (New Script, paste one file, save, repeat), the
+   `Awareness Hud Help` notecard, and the `notification` sound if you
+   want pings.
+6. Take the object into inventory, then wear it on any HUD position.
+   On its first wear it seats itself on screen (designed and tested
+   on the top right; other HUD positions get a sensible seat too).
+   After that you can drag it anywhere and it stays where you put it.
+   The boot message prints a reseat command that brings it back if it
+   ever ends up off screen.
+7. Press the Menu Button and run Status Check: it prints all four
+   build numbers, which should match the builds table above.
+
+### Changing the fixed names
+
+The names are constants at the top of the Core Script:
+`BUTTON_POWER`, `BUTTON_HELP`, `BUTTON_SOUND`, `BUTTON_MENU`,
+`HELP_CARD` and `PING_SOUND`. Edit them there if you want different
+names, and keep each button name unique in the linkset. Everything
+else about the design - shapes, sizes, colors, textures, layout,
+prim count - needs no script changes at all.
+
+### Why the four scripts are shaped this way
+
 If you fork this, keep the architecture unless you have a reason not to.
 It exists because of how Second Life's scripting runtime works.
 
@@ -145,8 +229,8 @@ help notecard already does.
 
 The help notecard text is documentation, not code, and is separately
 licensed under Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA
-4.0). You may share and adapt it, including commercially, as long as
-you credit Opossum Labs and share adaptations under the same license.
+4.0). You may share and adapt it, including commercially, as long as you
+credit Opossum Labs and share adaptations under the same license.
 
 The name "Opossum Labs" and this project's branding are not part of
 either license and are not licensed for use in derived works. If you
