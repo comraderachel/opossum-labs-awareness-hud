@@ -4,14 +4,15 @@
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation, either version 3 of
-// the License, or (at your option) any later version. See LICENSE.
+// the License, or (at your option) any later version. Full license
+// text is in the source repository (address below).
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Docs: README.md (design guide), ARCHITECTURE.md (states and data
-// flow). This script is the detection engine: a 2 s sweep loop that diffs the
+// Source and docs: github.com/comraderachel/opossum-labs-awareness-hud
+// This script is the detection engine: a 2 s sweep loop that diffs the
 // region against what it already knows and hands every account
 // lookup to the Registrar. It never touches the dataserver.
 
@@ -255,7 +256,7 @@ travelReset(string why)
 
 // the 2 s detection pass: region list -> scope filter -> watch diff
 // -> arrival diff. Scope filter and tracking cap follow the settings
-// mirror (see ARCHITECTURE.md, Data Script).
+// mirror broadcast by the Core Script.
 sweep()
 {
 

@@ -4,17 +4,18 @@
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation, either version 3 of
-// the License, or (at your option) any later version. See LICENSE.
+// the License, or (at your option) any later version. Full license
+// text is in the source repository (address below).
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Docs: README.md (design guide), ARCHITECTURE.md (states and data
-// flow). This script owns every account-data fetch: arrival lookups, List All,
+// Source and docs: github.com/comraderachel/opossum-labs-awareness-hud
+// This script owns every account-data fetch: arrival lookups, List All,
 // the census, and the Watch+ picker. Its memory guards are priced
 // against live population, and a quiescent self-heal reset keeps
-// boot memory available (see ARCHITECTURE.md, Registrar).
+// boot memory available.
 
 // ---------- constants and globals ----------
 string P = "SMH.";

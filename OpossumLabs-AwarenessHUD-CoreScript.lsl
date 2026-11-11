@@ -4,14 +4,15 @@
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation, either version 3 of
-// the License, or (at your option) any later version. See LICENSE.
+// the License, or (at your option) any later version. Full license
+// text is in the source repository (address below).
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Docs: README.md (design guide), ARCHITECTURE.md (states and data
-// flow). This script owns the settings, the watch list, the panel buttons,
+// Source and docs: github.com/comraderachel/opossum-labs-awareness-hud
+// This script owns the settings, the watch list, the panel buttons,
 // the power light, persistence, and the failure sweep over the
 // other three scripts.
 
@@ -140,8 +141,8 @@ string scopeLabel()
 }
 
 // ---------- functions ----------
-// Every durable value is written to linkset data under the SMH. prefix
-// (see ARCHITECTURE.md, the bus tables), so any script can reset freely.
+// Every durable value is written to linkset data under the SMH. prefix,
+// so any script can reset freely.
 savePref(string name, string value)
 {
     integer r = llLinksetDataWrite(P + name, value);
@@ -299,7 +300,7 @@ integer capNarrowed()
     return TRUE;
 }
 
-// power light vocabulary: failure > OFF > busy blink (ARCHITECTURE.md)
+// power light vocabulary: failure > OFF > busy blink
 lightTick(integer now)
 {
 

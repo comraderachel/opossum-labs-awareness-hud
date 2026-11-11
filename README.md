@@ -37,8 +37,11 @@ renders on GitHub).
    `Awareness Hud Help` (the Core looks for this name).
 4. Wear the HUD. The first-time welcome flow walks you through the rest.
 
-Comments in these files are deliberately short. The why behind each
-design lives in README.md and ARCHITECTURE.md, not in the code.
+Comments in these files are deliberately short: each header carries
+the repository address, and the why behind each design lives here and
+in ARCHITECTURE.md, not in the code. Someone reading a script inside
+Second Life cannot open the markdown pages, so the code comments
+stand on their own.
 
 ## Design guide: making your own HUD from this code
 
@@ -101,7 +104,28 @@ Invariants to respect when editing:
   with diagrams.
 - The help notecard - end-user documentation, readable outside Second
   Life too.
-- Each script header - a short license notice and what the script owns.
+- Each script header - a short license notice, what the script owns,
+  and the repository address.
+
+## Known issues and limitations
+
+- The watch list holds at most 20 entries.
+- In busy regions the memory guards trip on purpose: List All answers
+  with a short memory note and Watch+ offers Manual Add only until the
+  region quiets down. The HUD degrades; it never crashes.
+- The Watch+ picker and its Manual Add box expire after 120 seconds
+  with no response - just click Watch+ again.
+- Under memory pressure the Data Script tracks fewer avatars and slows
+  its sweep from 2 s to 10 s, and says so in chat.
+- On parcels that disallow scripts the HUD is dormant - no detection,
+  no menus - and wakes itself up when you leave. That is Second Life's
+  rule, not a fault.
+- Arrival details (account age, payment status) come from the
+  dataserver and can lag a few seconds behind the arrival itself.
+- Crossing a region border or teleporting aborts any listing in
+  progress; the HUD re-adopts the new region silently on its first pass.
+- Sim freezes are Second Life scheduling, not HUD faults: the HUD waits
+  them out and catches up by itself, and Trace shows them.
 
 ## Compatibility
 

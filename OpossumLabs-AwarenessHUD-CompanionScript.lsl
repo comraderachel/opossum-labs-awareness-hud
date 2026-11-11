@@ -4,17 +4,17 @@
 // This program is free software: you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation, either version 3 of
-// the License, or (at your option) any later version. See LICENSE.
+// the License, or (at your option) any later version. Full license
+// text is in the source repository (address below).
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 //
-// Docs: README.md (design guide), ARCHITECTURE.md (states and data
-// flow). This script is the wearer's interface: every menu, every dialog and
+// Source and docs: github.com/comraderachel/opossum-labs-awareness-hud
+// This script is the wearer's interface: every menu, every dialog and
 // every chat line, plus the encounter log, the Core watchdog and
-// its own quiescent self-heal reset (see ARCHITECTURE.md,
-// Companion).
+// its own quiescent self-heal reset.
 
 // ---------- constants and globals ----------
 integer LM_LANG_ASK = 19024;
