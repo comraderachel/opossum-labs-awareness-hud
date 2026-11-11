@@ -494,9 +494,10 @@ watch list is cleared automatically for the new owner.
 The HUD object itself is modify, so you can customize it - but
 the scripts inside find the parts BY NAME. Renaming any prim,
 unlinking the prims, or deleting one will break the HUD (the
-buttons stop working, or detection stops). The scripts are
-locked (no-modify), so that wiring cannot be fixed from the
-outside. The HUD holds four scripts - Core Script (root
+buttons stop working, or detection stops). The scripts
+themselves are full permission, so you can update or replace
+them yourself (updates are covered at the end of this
+notecard). The HUD holds four scripts - Core Script (root
 prim), Companion Script, Data Script and Registrar Script -
 and the Wipe button finds the last three BY their exact
 inventory names.
@@ -578,5 +579,12 @@ Made by Opossum Labs
 
 This HUD is open source under the GPL-3.0 license. Source
 code: github.com/comraderachel/opossum-labs-awareness-hud
+
+Updates: you can get the latest version of this HUD free via
+the redeliver function on the SL Marketplace -
+https://marketplace.secondlife.com/stores/148048
+The scripts are full permission, so you can also copy the
+latest versions from the GitHub repository above and paste
+them into your HUD's inventory.
 
 ==========================================================================
